@@ -642,22 +642,20 @@
     .vault.open .reel em { color: var(--accent-bright); text-shadow: 0 0 12px rgba(0, 201, 232, .7); }
     @media (max-width: 960px) { .vault { max-width: 340px; } }
 
-    /* THUNDER WARRIOR */
+    /* STORM FINALE */
+    .storm-title {
+      position: fixed; left: 0; right: 0; top: 13%; z-index: 72; pointer-events: none;
+      display: flex; flex-direction: column; align-items: center; gap: 14px; text-align: center;
+    }
+    .storm-title .st-word { display: flex; font-size: clamp(64px, 15vw, 220px); font-weight: 700; letter-spacing: -.05em; line-height: .9; }
+    .storm-title .st-word span { color: #152028; transition: color .12s, text-shadow .3s; }
+    .storm-title .st-word span.lit { color: #e8fcff; text-shadow: 0 0 18px rgba(0, 201, 232, .9), 0 0 60px rgba(0, 201, 232, .5); }
+    .storm-title .st-sub { font: 500 13px var(--mono); letter-spacing: .3em; color: var(--accent-bright); opacity: 0; transition: opacity .6s; }
+    .storm-title.on .st-sub { opacity: 1; }
     .storm {
       position: fixed; inset: 0; z-index: 68; pointer-events: none; opacity: 0;
-      background: radial-gradient(90% 55% at 50% 100%, rgba(0, 80, 100, .35), transparent 70%), linear-gradient(rgba(2, 5, 8, .92), rgba(3, 7, 10, .78));
+      background: radial-gradient(90% 55% at 50% 100%, rgba(0, 80, 100, .35), transparent 70%), linear-gradient(rgba(2, 5, 8, .97), rgba(3, 7, 10, .9));
     }
-    .thor { position: fixed; inset: 0; z-index: 71; pointer-events: none; }
-    .thor-svg { position: absolute; overflow: visible; filter: drop-shadow(0 0 1.5px #bff6ff) drop-shadow(0 0 12px rgba(0, 201, 232, .55)); transition: filter .4s; }
-    .thor.charged .thor-svg { filter: drop-shadow(0 0 2px #e8fcff) drop-shadow(0 0 22px rgba(0, 201, 232, .95)); }
-    .thor-glow { position: absolute; left: 50%; bottom: 6%; width: 70vmin; height: 70vmin; translate: -50% 0; background: radial-gradient(circle, rgba(0, 201, 232, .22), transparent 65%); opacity: .6; transition: opacity .4s; }
-    .thor.charged .thor-glow { opacity: 1; }
-    .th-limb { stroke: #070a0d; stroke-linecap: round; fill: none; }
-    .th-fill { fill: #070a0d; }
-    .th-cape { fill: #0f171d; stroke: #1c2a33; stroke-width: 1.5; }
-    .th-trim { stroke: #1a2630; stroke-width: 5; }
-    .th-eyes circle { fill: #bff6ff; filter: drop-shadow(0 0 4px #00c9e8); }
-    .th-eyes { transition: opacity .2s; }
     .crack-canvas { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 69; pointer-events: none; }
 
     /* TEAM PHOTO ENTRANCE + HOVER */
@@ -2213,68 +2211,7 @@
     const wait = ms => new Promise(r => setTimeout(r, ms));
     const pose = (x, y, r, s) => `translate(${x}px, ${y}px) rotate(${r}deg) scale(${s})`;
 
-    // ---- Thunder warrior: rig + poses -------------------------------------------------
-    const THOR_SVG = `<svg class="thor-svg" viewBox="-80 -120 360 420">
-      <g id="thRoot">
-        <g id="thCapeG"><path id="thCape" class="th-cape" d="M80 64C66 112 58 182 48 242Q74 254 100 249Q126 254 152 242C142 182 134 112 120 64Z" /></g>
-        <g id="thLegL"><path class="th-limb" d="M92 150V210" stroke-width="27" />
-          <g id="thShinL"><circle class="th-fill" cx="92" cy="210" r="11" /><path class="th-limb" d="M92 210V268" stroke-width="20" /><path class="th-fill" d="M80 264h22l4 14H76z" /></g></g>
-        <g id="thLegR"><path class="th-limb" d="M108 150V210" stroke-width="27" />
-          <g id="thShinR"><circle class="th-fill" cx="108" cy="210" r="11" /><path class="th-limb" d="M108 210V268" stroke-width="20" /><path class="th-fill" d="M98 264h22l4 14H94z" /></g></g>
-        <g id="thUpper">
-          <g id="thArmL"><circle class="th-fill" cx="76" cy="72" r="15" /><path class="th-limb" d="M78 72V118" stroke-width="20" />
-            <g id="thForeL"><circle class="th-fill" cx="78" cy="118" r="8" /><path class="th-limb" d="M78 118V158" stroke-width="17" /><circle class="th-fill" cx="78" cy="163" r="8.5" /></g></g>
-          <path class="th-fill" d="M66 68Q100 50 134 68L126 116L117 154H83L74 116Z" />
-          <path class="th-trim" d="M86 143H114" />
-          <rect class="th-fill" x="94" y="48" width="12" height="16" rx="3" />
-          <circle class="th-fill" cx="100" cy="37" r="15" />
-          <path class="th-fill" d="M86 31L68 16L73 30L84 36Z M114 31L132 16L127 30L116 36Z" />
-          <g class="th-eyes"><circle cx="94.5" cy="38" r="2" /><circle cx="105.5" cy="38" r="2" /></g>
-          <g id="thArmR"><circle class="th-fill" cx="124" cy="72" r="15" /><path class="th-limb" d="M122 72V118" stroke-width="20" />
-            <g id="thForeR"><circle class="th-fill" cx="122" cy="118" r="8" /><path class="th-limb" d="M122 118V158" stroke-width="17" />
-              <use href="#mjolnir" width="120" height="200" transform="translate(122 164) rotate(180) scale(.5) translate(-60 -140)" />
-              <circle class="th-fill" cx="122" cy="163" r="8.5" />
-              <circle id="thMark" cx="122" cy="229" r="1" fill="none" /></g></g>
-        </g>
-      </g></svg>`;
-    const JOINTS = { legL: [92, 150], shinL: [92, 210], legR: [108, 150], shinR: [108, 210], upper: [100, 150], armL: [78, 72], foreL: [78, 118], armR: [122, 72], foreR: [122, 118] };
-    const P = {
-      air:    { x: 0, y: 0, legL: 10, shinL: -20, legR: -8, shinR: 16, upper: 0, armL: 40, foreL: 15, armR: -168, foreR: -10, cape: -8, capeW: 1.05, eyes: 0 },
-      raise:  { x: 0, y: 0, legL: 7, shinL: -10, legR: -7, shinR: 10, upper: 0, armL: 55, foreL: 30, armR: -178, foreR: 0, cape: 4, capeW: 1.15, eyes: 1 },
-      windup: { x: 0, y: -8, legL: 12, shinL: -22, legR: -12, shinR: 22, upper: -8, armL: 65, foreL: 45, armR: -205, foreR: -25, cape: 8, capeW: 1.2, eyes: 1 },
-      slam:   { x: 0, y: 36, legL: 45, shinL: -90, legR: -45, shinR: 90, upper: 12, armL: 70, foreL: 50, armR: -14, foreR: -4, cape: -4, capeW: 1.45, eyes: 1 },
-      stand:  { x: 0, y: 4, legL: 8, shinL: -12, legR: -8, shinR: 12, upper: 0, armL: 22, foreL: 10, armR: -10, foreR: 0, cape: 2, capeW: 1.1, eyes: 1 }
-    };
-    const ease = { out: t => 1 - Math.pow(1 - t, 3), in: t => t * t * t, inOut: t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2, outBack: t => 1 + 2.2 * Math.pow(t - 1, 3) + 1.2 * Math.pow(t - 1, 2) };
-    function makeRig(root) {
-      const el = id => root.querySelector('#' + id), g = {};
-      for (const k in JOINTS) g[k] = el('th' + k[0].toUpperCase() + k.slice(1));
-      g.root = el('thRoot'); g.cape = el('thCape'); g.capeG = el('thCapeG'); g.eyes = root.querySelector('.th-eyes');
-      let cur = { ...P.air }, flutter = 0;
-      function apply(p) {
-        cur = p;
-        g.root.setAttribute('transform', `translate(${p.x} ${p.y})`);
-        for (const k in JOINTS) g[k].setAttribute('transform', `rotate(${p[k]} ${JOINTS[k][0]} ${JOINTS[k][1]})`);
-        const w = Math.sin(flutter) * 3;
-        g.capeG.setAttribute('transform', `rotate(${p.upper} 100 150)`);
-        g.cape.setAttribute('transform', `translate(100 64) rotate(${p.cape + w}) scale(${p.capeW} 1) translate(-100 -64)`);
-        g.eyes.style.opacity = p.eyes;
-      }
-      function tween(to, ms, fn = ease.inOut, extra) {
-        const from = { ...cur }, t0 = performance.now();
-        return new Promise(res => {
-          (function f(t) {
-            const k = Math.min(1, (t - t0) / ms), e = fn(k), p = {};
-            for (const key in to) p[key] = from[key] + (to[key] - from[key]) * e;
-            flutter += .35;
-            if (extra) extra(p, k);
-            apply(p);
-            k < 1 ? requestAnimationFrame(f) : res();
-          })(t0);
-        });
-      }
-      return { apply, tween, get cur() { return cur; } };
-    }
+    const ease = { out: t => 1 - Math.pow(1 - t, 3), in: t => t * t * t };
 
     // ground cracks + rubble, drawn on their own canvas
     function groundFx(x, y) {
@@ -2341,7 +2278,7 @@
       };
       if (reduce) { setTimeout(done, 1600); return; }
 
-      // Build-up on the card
+      // 1. Build-up on the card
       const b = badge.getBoundingClientRect();
       shake(badge, 10, 900);
       sizeBolts();
@@ -2350,44 +2287,54 @@
       if (!boltRAF) boltRAF = requestAnimationFrame(boltLoop);
       sizePage();
 
-      // The storm rolls in
+      // 2. Storm rolls in
       const storm = document.createElement('div'); storm.className = 'storm'; document.body.append(storm);
       storm.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 600, fill: 'forwards' });
       for (let i = 0; i < 3; i++) {
         const x = innerWidth * (.15 + Math.random() * .7);
         zap(x, -20, x + (Math.random() - .5) * 200, innerHeight * (.2 + Math.random() * .25), 1.6, 250 + i * 220);
       }
-      burst('page-flash', innerWidth * .3, 0, [{ opacity: 0 }, { opacity: .5, offset: .1 }, { opacity: 0 }], { duration: 500, delay: 450 });
 
-      // The warrior drops out of the sky, hammer raised
-      const H = Math.min(innerHeight * .74, 600), W = H * 360 / 420, gy = innerHeight * .93, u = H / 420;
-      const wrap = document.createElement('div'); wrap.className = 'thor'; wrap.setAttribute('aria-hidden', 'true');
-      wrap.innerHTML = '<div class="thor-glow"></div>' + THOR_SVG;
-      const svgEl = wrap.querySelector('svg');
-      Object.assign(svgEl.style, { width: W + 'px', height: H + 'px', left: (innerWidth - W) / 2 + 'px', top: (gy - H * (398 / 420)) + 'px' });
-      document.body.append(wrap);
-      const rig = makeRig(svgEl);
-      const skyY = -(gy / u) - 420;
-      rig.apply({ ...P.air, y: skyY });
-      await wait(550);
-      await rig.tween({ ...P.raise, y: -70 }, 820, ease.out);
+      // 3. The hammer drops out of the sky, head-first
+      const sx0 = innerWidth / 2, gy = innerHeight * .84;
+      const W = Math.min(210, innerWidth * .36, innerHeight * .26), H = W * 5 / 3;
+      const hm = document.createElement('div');
+      hm.className = 'mjolnir-fly'; hm.setAttribute('aria-hidden', 'true');
+      hm.innerHTML = `<svg viewBox="0 0 120 200" width="${W}" height="${H}"><use href="#mjolnir" width="120" height="200" /></svg>`;
+      const cy0 = gy - H * .46 - H * .5;              // centre such that the head face touches the ground (head-down)
+      hm.style.left = (sx0 - W / 2) + 'px'; hm.style.top = (cy0 + H * .5 - H / 2) + 'px';
+      const hover = -innerHeight * .26;
+      const svg = hm.firstElementChild;
+      hm.style.transform = pose(0, -innerHeight - H, 900, .8);
+      document.body.append(hm);
+      await wait(500);
+      await hm.animate([
+        { transform: pose(0, -innerHeight - H, 900, .8) },
+        { transform: pose(0, hover + 30, 170, 1.02), offset: .85 },
+        { transform: pose(0, hover, 180, 1) }
+      ], { duration: 900, easing: 'cubic-bezier(.25,.6,.3,1)', fill: 'forwards' }).finished;
 
-      // Lightning answers: strikes the hammer from the sky and every side
-      const m = () => { const r = svgEl.querySelector('#thMark').getBoundingClientRect(); return [r.left, r.top]; };
-      const [hx, hy] = m();
-      wrap.classList.add('charged');
-      for (let i = 0; i < 4; i++) zap(hx + (Math.random() - .5) * innerWidth * .7, -30, hx, hy, 3.6 - i * .5, i * 90);
-      for (let i = 0; i < 10; i++) {
-        const a = Math.PI * (1.05 + i * .09) + (Math.random() - .5) * .2, far = Math.hypot(innerWidth, innerHeight) * .7;
-        zap(hx + Math.cos(a) * far, hy + Math.sin(a) * far * .6, hx, hy, 2 + Math.random(), 120 + (i % 5) * 60);
+      // 4. Lightning charges it from every side
+      const headY = cy0 + H * .5 + hover + H * .3;
+      const far = Math.hypot(innerWidth, innerHeight) * .75, a0 = Math.random() * Math.PI * 2;
+      for (let i = 0; i < 16; i++) {
+        const a = a0 + i * (Math.PI * 2 / 16) + (Math.random() - .5) * .3;
+        const tx = sx0 + (Math.random() - .5) * W * .5, ty = headY + (Math.random() - .5) * H * .2;
+        zap(tx + Math.cos(a) * far, ty + Math.sin(a) * far, tx, ty, 2.4 + Math.random(), (i % 8) * 50 + (i >= 8 ? 25 : 0));
       }
-      burst('page-flash', hx, hy, [{ opacity: 0 }, { opacity: .9, offset: .15 }, { opacity: 0 }], { duration: 600 });
-      await rig.tween({ ...P.raise, y: -70 }, 520, t => t, (p, k) => { p.x = (Math.random() - .5) * 5 * (1 - k * .3); p.y += (Math.random() - .5) * 5; });
+      zap(sx0, -20, sx0, cy0 + hover, 4, 420);
+      burst('page-flash', sx0, headY, [{ opacity: 0 }, { opacity: .9, offset: .15 }, { opacity: 0 }], { duration: 650 });
+      svg.animate([{ filter: 'drop-shadow(0 18px 28px rgba(0,0,0,.35))' }, { filter: 'drop-shadow(0 0 30px rgba(0,201,232,1)) brightness(1.4)' }], { duration: 300, fill: 'forwards' });
+      await hm.animate([0, 1, 2, 3, 4, 5, 6, 7].map(i => ({ transform: pose((Math.random() - .5) * 7, hover + (Math.random() - .5) * 7, 180 + (Math.random() - .5) * 5, 1) })),
+        { duration: 560, easing: 'linear' }).finished;
 
-      // Wind up… and SLAM
-      await rig.tween({ ...P.windup, y: -84 }, 260, ease.out);
-      await rig.tween({ ...P.slam }, 190, ease.in);
-      const [ix, iy] = m();
+      // 5. SLAM
+      await hm.animate([
+        { transform: pose(0, hover, 180, 1) },
+        { transform: pose(0, hover - 40, 176, 1.04), offset: .45, easing: 'cubic-bezier(.7,0,1,.5)' },
+        { transform: pose(0, 0, 184, 1.06) }
+      ], { duration: 330, fill: 'forwards' }).finished;
+      const ix = sx0, iy = gy;
       groundFx(ix, iy);
       const reach = Math.hypot(innerWidth, innerHeight);
       for (let i = 0; i < 12; i++) {
@@ -2396,29 +2343,42 @@
       }
       const d = Math.hypot(Math.max(ix, innerWidth - ix), Math.max(iy, innerHeight - iy)) * 2;
       burst('page-flash', ix, iy, [{ opacity: 0 }, { opacity: 1, offset: .08 }, { opacity: 0 }], { duration: 900, easing: 'ease-out' });
-      burst('shockwave', ix, iy, [{ width: '0px', height: '0px', opacity: 1 }, { width: d + 'px', height: d * .35 + 'px', opacity: 0 }], { duration: 900, easing: 'cubic-bezier(.2,.7,.2,1)' });
+      burst('shockwave', ix, iy, [{ width: '0px', height: '0px', opacity: 1 }, { width: d + 'px', height: d * .3 + 'px', opacity: 0 }], { duration: 900, easing: 'cubic-bezier(.2,.7,.2,1)' });
       burst('shockwave', ix, iy, [{ width: '0px', height: '0px', opacity: .8 }, { width: d * .7 + 'px', height: d * .7 + 'px', opacity: 0 }], { duration: 1000, delay: 90, easing: 'cubic-bezier(.2,.7,.2,1)', fill: 'backwards' });
       badge.classList.remove('flash'); void badge.offsetWidth; badge.classList.add('flash');
       quake(22, 520);
-      shake(wrap, 10, 380);
-
-      // Hold the pose, crackling
+      hm.animate([{ transform: pose(0, 0, 184, 1.06) }, { transform: pose(0, -6, 183, 1) }, { transform: pose(0, 0, 184, 1) }], { duration: 300, easing: 'ease-out', fill: 'forwards' });
       for (let i = 0; i < 8; i++) {
-        const x = ix + (Math.random() - .5) * W * .5, y = iy - Math.random() * H * .5;
-        zap(x, y, x + (Math.random() - .5) * 90, y + (Math.random() - .5) * 70, 1.2, 250 + i * 110);
+        const x = ix + (Math.random() - .5) * W, y = iy - Math.random() * H * .6;
+        zap(x, y, x + (Math.random() - .5) * 90, y + (Math.random() - .5) * 60, 1.2, 250 + i * 120);
       }
-      await rig.tween({ ...P.slam, y: 40 }, 1000, ease.out);
 
-      // Rise, then vanish into the storm
-      await rig.tween({ ...P.stand }, 520, ease.inOut);
-      wrap.classList.remove('charged');
-      zap(innerWidth / 2, -20, innerWidth / 2 + (Math.random() - .5) * 40, gy - H * .6, 4);
-      burst('page-flash', innerWidth / 2, gy - H * .5, [{ opacity: 0 }, { opacity: .8, offset: .1 }, { opacity: 0 }], { duration: 500 });
-      await wait(60);
-      wrap.animate([{ opacity: 1, filter: 'brightness(1)' }, { opacity: 0, filter: 'brightness(3)' }], { duration: 380, fill: 'forwards' });
-      storm.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 900, delay: 200, fill: 'forwards' });
-      await wait(1100);
-      wrap.remove(); storm.remove();
+      // 6. VOLTEX powers on in the storm
+      await wait(350);
+      const title = document.createElement('div'); title.className = 'storm-title'; title.setAttribute('aria-hidden', 'true');
+      title.innerHTML = '<div class="st-word">' + [...'VOLTEX'].map(c => `<span>${c}</span>`).join('') + '</div><div class="st-sub">POWER &amp; PRECISION</div>';
+      document.body.append(title);
+      const letters = [...title.querySelectorAll('.st-word span')];
+      const tr = title.querySelector('.st-word').getBoundingClientRect();
+      zap(tr.left - 30, tr.top + tr.height * .5, tr.right + 30, tr.top + tr.height * .45, 2.2);
+      for (let i = 0; i < letters.length; i++) { letters[i].classList.add('lit'); await wait(55); }
+      title.classList.add('on');
+      await wait(1300);
+
+      // 7. The hammer is called back to the sky
+      svg.animate([{ filter: 'drop-shadow(0 0 30px rgba(0,201,232,1)) brightness(1.4)' }, { filter: 'drop-shadow(0 0 40px rgba(0,201,232,1)) brightness(1.8)' }], { duration: 200, fill: 'forwards' });
+      await hm.animate([0, 1, 2, 3, 4].map(i => ({ transform: pose((Math.random() - .5) * 5, (Math.random() - .5) * 4, 184, 1) })), { duration: 260 }).finished;
+      zap(sx0, -20, sx0, iy - H * .5, 3.6);
+      title.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 500, fill: 'forwards' });
+      await hm.animate([
+        { transform: pose(0, 0, 184, 1) },
+        { transform: pose(0, 20, 184, 1), offset: .12 },
+        { transform: pose(0, -innerHeight - H * 1.5, 180 + 720, .7) }
+      ], { duration: 700, easing: 'cubic-bezier(.5,0,.8,.4)', fill: 'forwards' }).finished;
+      hm.remove();
+      storm.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 800, fill: 'forwards' });
+      await wait(850);
+      storm.remove(); title.remove();
       done();
     }
     badge.addEventListener('pointerdown', e => {
