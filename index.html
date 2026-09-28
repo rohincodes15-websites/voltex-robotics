@@ -642,37 +642,43 @@
     .vault.open .reel em { color: var(--accent-bright); text-shadow: 0 0 12px rgba(0, 201, 232, .7); }
     @media (max-width: 960px) { .vault { max-width: 340px; } }
 
-    /* BATTERY RAIL */
-    .rail {
-      position: fixed; right: 30px; top: 50%; z-index: 40;
-      height: 46vh; width: 44px;
-      display: flex; flex-direction: column; align-items: center; gap: 10px;
-      transform: translateY(-50%);
-      opacity: 0; transition: opacity .6s var(--ease);
-      pointer-events: none;
+    /* THUNDER WARRIOR */
+    .storm {
+      position: fixed; inset: 0; z-index: 68; pointer-events: none; opacity: 0;
+      background: radial-gradient(90% 55% at 50% 100%, rgba(0, 80, 100, .35), transparent 70%), linear-gradient(rgba(2, 5, 8, .92), rgba(3, 7, 10, .78));
     }
-    .rail.show { opacity: 1; }
-    .rail .label { font-size: 11px; white-space: nowrap; transition: color .4s, text-shadow .4s; }
-    .rail-v { color: var(--ink); min-width: 44px; text-align: center; font-variant-numeric: tabular-nums; }
-    .rail-track { position: relative; flex: 1; width: 2px; border-radius: 2px; background: var(--line); }
-    .rail-fill {
-      position: absolute; inset: 0; border-radius: 2px;
-      background: linear-gradient(var(--accent), var(--accent-bright));
-      transform-origin: top; transform: scaleY(0);
+    .thor { position: fixed; inset: 0; z-index: 71; pointer-events: none; }
+    .thor-svg { position: absolute; overflow: visible; filter: drop-shadow(0 0 1.5px #bff6ff) drop-shadow(0 0 12px rgba(0, 201, 232, .55)); transition: filter .4s; }
+    .thor.charged .thor-svg { filter: drop-shadow(0 0 2px #e8fcff) drop-shadow(0 0 22px rgba(0, 201, 232, .95)); }
+    .thor-glow { position: absolute; left: 50%; bottom: 6%; width: 70vmin; height: 70vmin; translate: -50% 0; background: radial-gradient(circle, rgba(0, 201, 232, .22), transparent 65%); opacity: .6; transition: opacity .4s; }
+    .thor.charged .thor-glow { opacity: 1; }
+    .th-limb { stroke: #070a0d; stroke-linecap: round; fill: none; }
+    .th-fill { fill: #070a0d; }
+    .th-cape { fill: #0f171d; stroke: #1c2a33; stroke-width: 1.5; }
+    .th-trim { stroke: #1a2630; stroke-width: 5; }
+    .th-eyes circle { fill: #bff6ff; filter: drop-shadow(0 0 4px #00c9e8); }
+    .th-eyes { transition: opacity .2s; }
+    .crack-canvas { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 69; pointer-events: none; }
+
+    /* TEAM PHOTO ENTRANCE + HOVER */
+    .person .person-photo { transform-style: preserve-3d; transition: transform .5s var(--ease); }
+    .person-photo img { clip-path: inset(0 0 100% 0); scale: 1.18; transition: clip-path 1.1s cubic-bezier(.7, 0, .2, 1), scale 1.6s var(--ease), transform 1s var(--ease); transition-delay: calc(var(--i, 0) * 140ms + 150ms), calc(var(--i, 0) * 140ms + 150ms), 0s; }
+    .person.in .person-photo img { clip-path: inset(0 0 0 0); scale: 1; }
+    .person-photo::before {
+      content: ''; position: absolute; left: 0; right: 0; top: 0; height: 2px; z-index: 2; opacity: 0; pointer-events: none;
+      background: var(--accent-bright); box-shadow: 0 0 12px 2px rgba(0, 201, 232, .8), 0 0 40px 6px rgba(0, 201, 232, .35);
     }
-    .rail-spark {
-      position: absolute; left: 50%; top: 0; width: 8px; height: 8px; margin: -4px 0 0 -4px; border-radius: 50%;
-      background: #e8fcff; box-shadow: 0 0 6px 2px rgba(0, 201, 232, .8), 0 0 16px 4px rgba(0, 201, 232, .35);
+    .person.in .person-photo::before { animation: scanDown 1.1s cubic-bezier(.7, 0, .2, 1) calc(var(--i, 0) * 140ms + 150ms) both; }
+    @keyframes scanDown { 0% { top: 0; opacity: 1; } 92% { top: 100%; opacity: 1; } 100% { top: 100%; opacity: 0; } }
+    .person .tag { opacity: 0; translate: 0 -6px; transition: opacity .5s, translate .5s var(--ease); transition-delay: calc(var(--i, 0) * 140ms + 1s); }
+    .person.in .tag { opacity: 1; translate: 0 0; }
+    .photo-glare {
+      position: absolute; inset: 0; z-index: 1; pointer-events: none; opacity: 0; transition: opacity .4s;
+      background: radial-gradient(260px circle at var(--gx, 50%) var(--gy, 0%), rgba(255, 255, 255, .22), transparent 60%);
+      mix-blend-mode: soft-light;
     }
-    .rail-tick {
-      position: absolute; left: 50%; width: 9px; height: 1px; margin-left: -4.5px;
-      background: var(--muted); transition: background .4s, width .4s var(--ease), margin .4s var(--ease);
-    }
-    .rail-tick.on { background: var(--accent-bright); width: 13px; margin-left: -6.5px; }
-    .rail-canvas { position: absolute; left: -40px; top: 0; width: 124px; height: 100%; pointer-events: none; }
-    .rail.full .rail-v { color: var(--accent-bright); text-shadow: 0 0 10px rgba(0, 201, 232, .6); }
-    .rail.full .rail-cap { color: var(--accent-bright); }
-    @media (max-width: 1360px) { .rail { display: none; } }
+    .person:hover .photo-glare { opacity: 1; }
+    @media (prefers-reduced-motion: reduce) { .person-photo img { clip-path: none; scale: 1; } .person-photo::before { display: none; } }
 
     /* SECTION INDEX */
     .index {
@@ -1580,12 +1586,6 @@
   </svg>
 
   <div id="progress"></div>
-  <div class="rail" id="rail" aria-hidden="true">
-    <span class="rail-v label" id="railV">0.0V</span>
-    <div class="rail-track" id="railTrack"><i class="rail-fill" id="railFill"></i><span class="rail-spark" id="railSpark"></span></div>
-    <span class="rail-cap label">12V</span>
-    <canvas class="rail-canvas" id="railCanvas"></canvas>
-  </div>
 
   <nav class="index" aria-label="Sections">
     <a href="#about"><i></i>01 About</a>
@@ -2213,6 +2213,123 @@
     const wait = ms => new Promise(r => setTimeout(r, ms));
     const pose = (x, y, r, s) => `translate(${x}px, ${y}px) rotate(${r}deg) scale(${s})`;
 
+    // ---- Thunder warrior: rig + poses -------------------------------------------------
+    const THOR_SVG = `<svg class="thor-svg" viewBox="-80 -120 360 420">
+      <g id="thRoot">
+        <g id="thCapeG"><path id="thCape" class="th-cape" d="M80 64C66 112 58 182 48 242Q74 254 100 249Q126 254 152 242C142 182 134 112 120 64Z" /></g>
+        <g id="thLegL"><path class="th-limb" d="M92 150V210" stroke-width="27" />
+          <g id="thShinL"><circle class="th-fill" cx="92" cy="210" r="11" /><path class="th-limb" d="M92 210V268" stroke-width="20" /><path class="th-fill" d="M80 264h22l4 14H76z" /></g></g>
+        <g id="thLegR"><path class="th-limb" d="M108 150V210" stroke-width="27" />
+          <g id="thShinR"><circle class="th-fill" cx="108" cy="210" r="11" /><path class="th-limb" d="M108 210V268" stroke-width="20" /><path class="th-fill" d="M98 264h22l4 14H94z" /></g></g>
+        <g id="thUpper">
+          <g id="thArmL"><circle class="th-fill" cx="76" cy="72" r="15" /><path class="th-limb" d="M78 72V118" stroke-width="20" />
+            <g id="thForeL"><circle class="th-fill" cx="78" cy="118" r="8" /><path class="th-limb" d="M78 118V158" stroke-width="17" /><circle class="th-fill" cx="78" cy="163" r="8.5" /></g></g>
+          <path class="th-fill" d="M66 68Q100 50 134 68L126 116L117 154H83L74 116Z" />
+          <path class="th-trim" d="M86 143H114" />
+          <rect class="th-fill" x="94" y="48" width="12" height="16" rx="3" />
+          <circle class="th-fill" cx="100" cy="37" r="15" />
+          <path class="th-fill" d="M86 31L68 16L73 30L84 36Z M114 31L132 16L127 30L116 36Z" />
+          <g class="th-eyes"><circle cx="94.5" cy="38" r="2" /><circle cx="105.5" cy="38" r="2" /></g>
+          <g id="thArmR"><circle class="th-fill" cx="124" cy="72" r="15" /><path class="th-limb" d="M122 72V118" stroke-width="20" />
+            <g id="thForeR"><circle class="th-fill" cx="122" cy="118" r="8" /><path class="th-limb" d="M122 118V158" stroke-width="17" />
+              <use href="#mjolnir" width="120" height="200" transform="translate(122 164) rotate(180) scale(.5) translate(-60 -140)" />
+              <circle class="th-fill" cx="122" cy="163" r="8.5" />
+              <circle id="thMark" cx="122" cy="229" r="1" fill="none" /></g></g>
+        </g>
+      </g></svg>`;
+    const JOINTS = { legL: [92, 150], shinL: [92, 210], legR: [108, 150], shinR: [108, 210], upper: [100, 150], armL: [78, 72], foreL: [78, 118], armR: [122, 72], foreR: [122, 118] };
+    const P = {
+      air:    { x: 0, y: 0, legL: 10, shinL: -20, legR: -8, shinR: 16, upper: 0, armL: 40, foreL: 15, armR: -168, foreR: -10, cape: -8, capeW: 1.05, eyes: 0 },
+      raise:  { x: 0, y: 0, legL: 7, shinL: -10, legR: -7, shinR: 10, upper: 0, armL: 55, foreL: 30, armR: -178, foreR: 0, cape: 4, capeW: 1.15, eyes: 1 },
+      windup: { x: 0, y: -8, legL: 12, shinL: -22, legR: -12, shinR: 22, upper: -8, armL: 65, foreL: 45, armR: -205, foreR: -25, cape: 8, capeW: 1.2, eyes: 1 },
+      slam:   { x: 0, y: 36, legL: 45, shinL: -90, legR: -45, shinR: 90, upper: 12, armL: 70, foreL: 50, armR: -14, foreR: -4, cape: -4, capeW: 1.45, eyes: 1 },
+      stand:  { x: 0, y: 4, legL: 8, shinL: -12, legR: -8, shinR: 12, upper: 0, armL: 22, foreL: 10, armR: -10, foreR: 0, cape: 2, capeW: 1.1, eyes: 1 }
+    };
+    const ease = { out: t => 1 - Math.pow(1 - t, 3), in: t => t * t * t, inOut: t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2, outBack: t => 1 + 2.2 * Math.pow(t - 1, 3) + 1.2 * Math.pow(t - 1, 2) };
+    function makeRig(root) {
+      const el = id => root.querySelector('#' + id), g = {};
+      for (const k in JOINTS) g[k] = el('th' + k[0].toUpperCase() + k.slice(1));
+      g.root = el('thRoot'); g.cape = el('thCape'); g.capeG = el('thCapeG'); g.eyes = root.querySelector('.th-eyes');
+      let cur = { ...P.air }, flutter = 0;
+      function apply(p) {
+        cur = p;
+        g.root.setAttribute('transform', `translate(${p.x} ${p.y})`);
+        for (const k in JOINTS) g[k].setAttribute('transform', `rotate(${p[k]} ${JOINTS[k][0]} ${JOINTS[k][1]})`);
+        const w = Math.sin(flutter) * 3;
+        g.capeG.setAttribute('transform', `rotate(${p.upper} 100 150)`);
+        g.cape.setAttribute('transform', `translate(100 64) rotate(${p.cape + w}) scale(${p.capeW} 1) translate(-100 -64)`);
+        g.eyes.style.opacity = p.eyes;
+      }
+      function tween(to, ms, fn = ease.inOut, extra) {
+        const from = { ...cur }, t0 = performance.now();
+        return new Promise(res => {
+          (function f(t) {
+            const k = Math.min(1, (t - t0) / ms), e = fn(k), p = {};
+            for (const key in to) p[key] = from[key] + (to[key] - from[key]) * e;
+            flutter += .35;
+            if (extra) extra(p, k);
+            apply(p);
+            k < 1 ? requestAnimationFrame(f) : res();
+          })(t0);
+        });
+      }
+      return { apply, tween, get cur() { return cur; } };
+    }
+
+    // ground cracks + rubble, drawn on their own canvas
+    function groundFx(x, y) {
+      const cv = document.createElement('canvas'); cv.className = 'crack-canvas'; document.body.append(cv);
+      const dpr = Math.min(2, devicePixelRatio || 1); cv.width = innerWidth * dpr; cv.height = innerHeight * dpr;
+      const c = cv.getContext('2d'); c.setTransform(dpr, 0, 0, dpr, 0, 0);
+      const cracks = [];
+      for (let i = 0; i < 9; i++) {
+        let a = (i % 2 ? Math.PI : 0) + (Math.random() - .5) * .5 + (i > 5 ? (Math.random() - .5) * 1.6 : 0);
+        const pts = [[x, y]]; let px = x, py = y, len = 60 + Math.random() * innerWidth * .3;
+        for (let d = 0; d < len; d += 14) {
+          a += (Math.random() - .5) * .6; px += Math.cos(a) * 14; py += Math.sin(a) * 14 * .35 + (Math.random() - .3) * 3;
+          pts.push([px, py]);
+          if (Math.random() < .12) cracks.push({ pts: [[px, py], [px + (Math.random() - .5) * 50, py + Math.random() * 18]], w: 1 });
+        }
+        cracks.push({ pts, w: 2.4 });
+      }
+      const rubble = Array.from({ length: 46 }, () => ({
+        x, y, vx: (Math.random() - .5) * 16, vy: -4 - Math.random() * 13, s: 2 + Math.random() * 5, r: Math.random() * 6, spark: Math.random() < .35
+      }));
+      const t0 = performance.now();
+      return new Promise(res => {
+        (function f(t) {
+          const age = t - t0; c.clearRect(0, 0, innerWidth, innerHeight);
+          const grow = Math.min(1, age / 180), fade = age < 1400 ? 1 : Math.max(0, 1 - (age - 1400) / 900);
+          c.lineCap = 'round'; c.lineJoin = 'round';
+          cracks.forEach(cr => {
+            const n = Math.max(2, Math.ceil(cr.pts.length * grow));
+            c.beginPath(); c.moveTo(cr.pts[0][0], cr.pts[0][1]);
+            for (let k = 1; k < n; k++) c.lineTo(cr.pts[k][0], cr.pts[k][1]);
+            c.globalAlpha = fade;
+            c.strokeStyle = 'rgba(0,201,232,.25)'; c.lineWidth = cr.w * 6; c.stroke();
+            c.strokeStyle = 'rgba(120,230,248,.9)'; c.lineWidth = cr.w * 1.6; c.stroke();
+            c.strokeStyle = '#fff'; c.lineWidth = cr.w * .5; c.stroke();
+          });
+          c.globalAlpha = 1;
+          rubble.forEach(r => {
+            r.vy += .55; r.x += r.vx; r.y += r.vy; r.vx *= .985; r.r += .2;
+            if (age > 1600) return;
+            c.save(); c.translate(r.x, r.y); c.rotate(r.r);
+            c.fillStyle = r.spark ? 'rgba(160,240,255,.95)' : 'rgba(120,130,140,.9)';
+            c.fillRect(-r.s / 2, -r.s / 2, r.s, r.spark ? r.s * .5 : r.s);
+            c.restore();
+          });
+          if (age < 2300) requestAnimationFrame(f); else { cv.remove(); res(); }
+        })(t0);
+      });
+    }
+    function quake(amt, dur) {
+      document.querySelectorAll('header.hero, .marquee, section, footer').forEach(el => {
+        const r = el.getBoundingClientRect();
+        if (r.bottom > 0 && r.top < innerHeight) shake(el, amt, dur);
+      });
+    }
+
     async function overcharge() {
       overcharging = true;
       chargeEl.textContent = 'Overcharged!';
@@ -2224,96 +2341,84 @@
       };
       if (reduce) { setTimeout(done, 1600); return; }
 
-      // Build-up: the card rattles and fills with sparks
-      const b = badge.getBoundingClientRect(), cx = b.left + b.width / 2, cy = b.top + b.height / 2;
+      // Build-up on the card
+      const b = badge.getBoundingClientRect();
       shake(badge, 10, 900);
       sizeBolts();
       const t = performance.now();
-      for (let i = 0; i < 12; i++) {
-        bolts.push({ t0: t + i * 60, bolt: makeBolt(b.width / 2, b.height / 2, Math.random() * Math.PI * 2, Math.max(b.width, b.height) * (.3 + Math.random() * .3), 1) });
-      }
+      for (let i = 0; i < 12; i++) bolts.push({ t0: t + i * 60, bolt: makeBolt(b.width / 2, b.height / 2, Math.random() * Math.PI * 2, Math.max(b.width, b.height) * (.3 + Math.random() * .3), 1) });
       if (!boltRAF) boltRAF = requestAnimationFrame(boltLoop);
       sizePage();
 
-      // The hammer answers the call: it spins in from off-screen
-      // Everything from here happens in the middle of the screen
-      const sx0 = innerWidth / 2, sy0 = innerHeight / 2;
-      const W = Math.min(230, innerWidth * .42, innerHeight * .34), H = W * 5 / 3;
-      const hm = document.createElement('div');
-      hm.className = 'mjolnir-fly'; hm.setAttribute('aria-hidden', 'true');
-      hm.innerHTML = `<svg viewBox="0 0 120 200" width="${W}" height="${H}"><use href="#mjolnir" width="120" height="200" /></svg>`;
-      hm.style.left = (sx0 - W / 2) + 'px'; hm.style.top = (sy0 - H / 2) + 'px';
-      hm.style.transform = pose(-sx0 - W, -sy0 - H, -1080, .5);
-      document.body.append(hm);
-      const svg = hm.firstElementChild;
-      const hover = -H * .14;
-      await hm.animate([
-        { transform: pose(-sx0 - W, -sy0 - H, -1080, .5), opacity: 0 },
-        { opacity: 1, offset: .12 },
-        { transform: pose(0, hover - 26, 14, 1.04), offset: .82 },
-        { transform: pose(0, hover, 0, 1), opacity: 1 }
-      ], { duration: 820, delay: 120, easing: 'cubic-bezier(.3,.6,.3,1)', fill: 'forwards' }).finished;
-
-      // Lightning comes down from the sky into the hammer
-      const headY = sy0 + hover - H / 2 + H * .05, hcY = sy0 + hover - H / 2 + H * .23;
-      const far = Math.hypot(innerWidth, innerHeight) * .75, n = 14, a0 = Math.random() * Math.PI * 2;
-      for (let i = 0; i < n; i++) {
-        const a = a0 + i * (Math.PI * 2 / n) + (Math.random() - .5) * .3;
-        const tx = sx0 + (Math.random() - .5) * W * .5, ty = hcY + (Math.random() - .5) * H * .15;
-        zap(tx + Math.cos(a) * far, ty + Math.sin(a) * far, tx, ty, 2.6 + Math.random(), (i % 7) * 55 + (i >= 7 ? 30 : 0));
+      // The storm rolls in
+      const storm = document.createElement('div'); storm.className = 'storm'; document.body.append(storm);
+      storm.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 600, fill: 'forwards' });
+      for (let i = 0; i < 3; i++) {
+        const x = innerWidth * (.15 + Math.random() * .7);
+        zap(x, -20, x + (Math.random() - .5) * 200, innerHeight * (.2 + Math.random() * .25), 1.6, 250 + i * 220);
       }
-      zap(sx0, -20, sx0, headY, 4, 380);
-      burst('page-flash', sx0, headY, [{ opacity: 0 }, { opacity: .8, offset: .2 }, { opacity: 0 }], { duration: 500, easing: 'ease-out' });
-      svg.animate([
-        { filter: 'drop-shadow(0 18px 28px rgba(0,0,0,.35))' },
-        { filter: 'drop-shadow(0 0 26px rgba(0,201,232,1)) brightness(1.35)' }
-      ], { duration: 300, fill: 'forwards' });
-      hm.animate([0, 1, 2, 3, 4, 5, 6].map(i => ({ transform: pose((Math.random() - .5) * 6, hover + (Math.random() - .5) * 6, (Math.random() - .5) * 4, 1) })),
-        { duration: 420, easing: 'linear' });
-      await wait(440);
+      burst('page-flash', innerWidth * .3, 0, [{ opacity: 0 }, { opacity: .5, offset: .1 }, { opacity: 0 }], { duration: 500, delay: 450 });
 
-      // Wind up, flip over, and SLAM head-first into the card
-      const impactY = sy0 + H * .22, finalY = impactY - sy0 - H * .46;
-      await hm.animate([
-        { transform: pose(0, hover, 0, 1) },
-        { transform: pose(0, hover - 46, -40, 1.05), offset: .4, easing: 'cubic-bezier(.7,0,1,.5)' },
-        { transform: pose(0, finalY, 180, 1.08) }
-      ], { duration: 380, fill: 'forwards' }).finished;
+      // The warrior drops out of the sky, hammer raised
+      const H = Math.min(innerHeight * .74, 600), W = H * 360 / 420, gy = innerHeight * .93, u = H / 420;
+      const wrap = document.createElement('div'); wrap.className = 'thor'; wrap.setAttribute('aria-hidden', 'true');
+      wrap.innerHTML = '<div class="thor-glow"></div>' + THOR_SVG;
+      const svgEl = wrap.querySelector('svg');
+      Object.assign(svgEl.style, { width: W + 'px', height: H + 'px', left: (innerWidth - W) / 2 + 'px', top: (gy - H * (398 / 420)) + 'px' });
+      document.body.append(wrap);
+      const rig = makeRig(svgEl);
+      const skyY = -(gy / u) - 420;
+      rig.apply({ ...P.air, y: skyY });
+      await wait(550);
+      await rig.tween({ ...P.raise, y: -70 }, 820, ease.out);
 
-      // Impact
+      // Lightning answers: strikes the hammer from the sky and every side
+      const m = () => { const r = svgEl.querySelector('#thMark').getBoundingClientRect(); return [r.left, r.top]; };
+      const [hx, hy] = m();
+      wrap.classList.add('charged');
+      for (let i = 0; i < 4; i++) zap(hx + (Math.random() - .5) * innerWidth * .7, -30, hx, hy, 3.6 - i * .5, i * 90);
+      for (let i = 0; i < 10; i++) {
+        const a = Math.PI * (1.05 + i * .09) + (Math.random() - .5) * .2, far = Math.hypot(innerWidth, innerHeight) * .7;
+        zap(hx + Math.cos(a) * far, hy + Math.sin(a) * far * .6, hx, hy, 2 + Math.random(), 120 + (i % 5) * 60);
+      }
+      burst('page-flash', hx, hy, [{ opacity: 0 }, { opacity: .9, offset: .15 }, { opacity: 0 }], { duration: 600 });
+      await rig.tween({ ...P.raise, y: -70 }, 520, t => t, (p, k) => { p.x = (Math.random() - .5) * 5 * (1 - k * .3); p.y += (Math.random() - .5) * 5; });
+
+      // Wind up… and SLAM
+      await rig.tween({ ...P.windup, y: -84 }, 260, ease.out);
+      await rig.tween({ ...P.slam }, 190, ease.in);
+      const [ix, iy] = m();
+      groundFx(ix, iy);
       const reach = Math.hypot(innerWidth, innerHeight);
-      for (let i = 0; i < 11; i++) {
-        const ang = i * (Math.PI * 2 / 11) + (Math.random() - .5) * .4;
-        zap(sx0, impactY, sx0 + Math.cos(ang) * reach * (.4 + Math.random() * .4), impactY + Math.sin(ang) * reach * (.4 + Math.random() * .4), 3, i * 25);
+      for (let i = 0; i < 12; i++) {
+        const a = (i % 2 ? Math.PI : 0) + (Math.random() - .5) * .7 - (i > 7 ? Math.PI / 2 * Math.random() : 0);
+        zap(ix, iy, ix + Math.cos(a) * reach * (.3 + Math.random() * .4), iy + Math.sin(a) * reach * .25, 2.6, i * 20);
       }
-      const d = Math.hypot(Math.max(sx0, innerWidth - sx0), Math.max(impactY, innerHeight - impactY)) * 2;
-      burst('page-flash', sx0, impactY, [{ opacity: 0 }, { opacity: 1, offset: .12 }, { opacity: 0 }], { duration: 750, easing: 'ease-out' });
-      burst('shockwave', sx0, impactY, [{ width: '0px', height: '0px', opacity: 1 }, { width: d + 'px', height: d + 'px', opacity: 0 }], { duration: 950, easing: 'cubic-bezier(.2,.7,.2,1)' });
-      burst('shockwave', sx0, impactY, [{ width: '0px', height: '0px', opacity: .7 }, { width: d * .6 + 'px', height: d * .6 + 'px', opacity: 0 }], { duration: 950, delay: 120, easing: 'cubic-bezier(.2,.7,.2,1)', fill: 'backwards' });
+      const d = Math.hypot(Math.max(ix, innerWidth - ix), Math.max(iy, innerHeight - iy)) * 2;
+      burst('page-flash', ix, iy, [{ opacity: 0 }, { opacity: 1, offset: .08 }, { opacity: 0 }], { duration: 900, easing: 'ease-out' });
+      burst('shockwave', ix, iy, [{ width: '0px', height: '0px', opacity: 1 }, { width: d + 'px', height: d * .35 + 'px', opacity: 0 }], { duration: 900, easing: 'cubic-bezier(.2,.7,.2,1)' });
+      burst('shockwave', ix, iy, [{ width: '0px', height: '0px', opacity: .8 }, { width: d * .7 + 'px', height: d * .7 + 'px', opacity: 0 }], { duration: 1000, delay: 90, easing: 'cubic-bezier(.2,.7,.2,1)', fill: 'backwards' });
       badge.classList.remove('flash'); void badge.offsetWidth; badge.classList.add('flash');
-      shake(heroEl, 16, 420);
-      hm.animate([
-        { transform: pose(0, finalY, 180, 1.08) },
-        { transform: pose(0, finalY - 12, 180, 1) },
-        { transform: pose(0, finalY, 180, 1) }
-      ], { duration: 320, easing: 'ease-out', fill: 'forwards' });
+      quake(22, 520);
+      shake(wrap, 10, 380);
 
-      // Crackle with leftover charge
-      const headBottom = sy0 + finalY + H / 2 - H * .05;
-      for (let i = 0; i < 7; i++) {
-        const x = sx0 + (Math.random() - .5) * W * .9, y = headBottom - Math.random() * H * .3;
-        zap(x, y, x + (Math.random() - .5) * W * 1.2, y + (Math.random() - .5) * W * .8, 1.3, 250 + i * 95);
+      // Hold the pose, crackling
+      for (let i = 0; i < 8; i++) {
+        const x = ix + (Math.random() - .5) * W * .5, y = iy - Math.random() * H * .5;
+        zap(x, y, x + (Math.random() - .5) * 90, y + (Math.random() - .5) * 70, 1.2, 250 + i * 110);
       }
-      await wait(1000);
+      await rig.tween({ ...P.slam, y: 40 }, 1000, ease.out);
 
-      // Back to Thor: it spins off the top of the screen
-      svg.animate([{ filter: 'drop-shadow(0 0 26px rgba(0,201,232,1)) brightness(1.35)' }, { filter: 'drop-shadow(0 18px 28px rgba(0,0,0,.35))' }], { duration: 400, fill: 'forwards' });
-      await hm.animate([
-        { transform: pose(0, finalY, 180, 1) },
-        { transform: pose(0, finalY + 14, 200, 1), offset: .15 },
-        { transform: pose(sx0 + W, -sy0 - H * 1.5, 1260, .5), opacity: 0 }
-      ], { duration: 700, easing: 'cubic-bezier(.5,0,.9,.6)', fill: 'forwards' }).finished;
-      hm.remove();
+      // Rise, then vanish into the storm
+      await rig.tween({ ...P.stand }, 520, ease.inOut);
+      wrap.classList.remove('charged');
+      zap(innerWidth / 2, -20, innerWidth / 2 + (Math.random() - .5) * 40, gy - H * .6, 4);
+      burst('page-flash', innerWidth / 2, gy - H * .5, [{ opacity: 0 }, { opacity: .8, offset: .1 }, { opacity: 0 }], { duration: 500 });
+      await wait(60);
+      wrap.animate([{ opacity: 1, filter: 'brightness(1)' }, { opacity: 0, filter: 'brightness(3)' }], { duration: 380, fill: 'forwards' });
+      storm.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 900, delay: 200, fill: 'forwards' });
+      await wait(1100);
+      wrap.remove(); storm.remove();
       done();
     }
     badge.addEventListener('pointerdown', e => {
@@ -2505,54 +2610,19 @@
     }
     dial.addEventListener('click', vaultClick);
 
-    // Battery rail: fills 0 → 12V as you scroll, sparks when you scroll fast
-    const rail = document.getElementById('rail'), railTrack = document.getElementById('railTrack');
-    const railFill = document.getElementById('railFill'), railSpark = document.getElementById('railSpark'), railV = document.getElementById('railV');
-    const rcv = document.getElementById('railCanvas'), rctx = rcv.getContext('2d');
-    const railTicks = [...document.querySelectorAll('section[id]')].map(sec => {
-      const t = document.createElement('i'); t.className = 'rail-tick'; railTrack.append(t); return { sec, t };
-    });
-    let railP = 0, rBolts = [], rRAF = 0, rLast = 0, rPrevY = scrollY;
-    function railLayout() {
-      const max = document.documentElement.scrollHeight - innerHeight;
-      railTicks.forEach(o => { o.pos = Math.min(1, Math.max(0, (o.sec.offsetTop - innerHeight * .4) / max)); o.t.style.top = o.pos * 100 + '%'; });
-      const dpr = Math.min(2, devicePixelRatio || 1), r = rcv.getBoundingClientRect();
-      rcv.width = r.width * dpr; rcv.height = r.height * dpr; rctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    // Team photos: glare + slight tilt that follow the cursor
+    if (!reduce && matchMedia('(pointer: fine)').matches) {
+      document.querySelectorAll('.person').forEach(card => {
+        const ph = card.querySelector('.person-photo');
+        const gl = document.createElement('span'); gl.className = 'photo-glare'; ph.append(gl);
+        card.addEventListener('pointermove', e => {
+          const r = ph.getBoundingClientRect(), x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height;
+          ph.style.setProperty('--gx', x * 100 + '%'); ph.style.setProperty('--gy', y * 100 + '%');
+          ph.style.transform = `perspective(700px) rotateX(${(.5 - y) * 7}deg) rotateY(${(x - .5) * 9}deg)`;
+        });
+        card.addEventListener('pointerleave', () => { ph.style.transform = ''; });
+      });
     }
-    const railSpring = spring(140, 26, p => {
-      railP = p;
-      railFill.style.transform = `scaleY(${p})`;
-      railSpark.style.top = p * 100 + '%';
-      const full = p > .995;
-      railV.textContent = full ? '12.0V · charged' : (p * 12).toFixed(1) + 'V';
-      rail.classList.toggle('full', full);
-      railTicks.forEach(o => o.t.classList.toggle('on', p >= o.pos - .002));
-    });
-    function rLoop(t) {
-      rctx.clearRect(0, 0, rcv.width, rcv.height);
-      rBolts = rBolts.filter(b => t - b.t0 < 320);
-      rctx.lineCap = 'round'; rctx.lineJoin = 'round';
-      rBolts.forEach(b => { rctx.globalAlpha = Math.max(0, 1 - (t - b.t0) / 320); drawBolt(rctx, b.bolt, Math.min(1, (t - b.t0) / 70)); });
-      rctx.globalAlpha = 1;
-      rRAF = rBolts.length ? requestAnimationFrame(rLoop) : 0;
-    }
-    function onRail() {
-      const max = document.documentElement.scrollHeight - innerHeight;
-      railSpring(max > 0 ? Math.min(1, scrollY / max) : 0);
-      rail.classList.toggle('show', scrollY > innerHeight * .5);
-      const dy = Math.abs(scrollY - rPrevY), now = performance.now(); rPrevY = scrollY;
-      if (reduce || dy < 14 || now - rLast < 90 || !rail.classList.contains('show')) return;
-      rLast = now;
-      const h = rcv.getBoundingClientRect().height, y = railP * h;
-      const a = Math.PI + (Math.random() - .5) * 1.6 + (Math.random() < .35 ? Math.PI : 0);
-      rBolts.push({ t0: now, bolt: makeBolt(62, y, a, 14 + Math.random() * 22, .8) });
-      if (!rRAF) rRAF = requestAnimationFrame(rLoop);
-    }
-    addEventListener('scroll', onRail, { passive: true });
-    addEventListener('resize', railLayout);
-    document.fonts.ready.then(railLayout);
-    addEventListener('load', () => { railLayout(); onRail(); });
-    railLayout(); onRail();
 
     // Wordmark electricity
     let wmPowered = false, wmBolts = [], wmRAF = 0, wmLast = 0;
