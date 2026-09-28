@@ -2751,46 +2751,30 @@
     addEventListener('resize', () => movePill(tabs.querySelector('.tab.on'), true));
     document.fonts.ready.then(() => movePill(tabs.querySelector('.tab.on'), true));
 
-    // Team photos start blacked out. Clicking the hammer sends one bolt down that splits and
-    // runs along the grid gaps like wiring, reaching each photo at a constant speed.
+    // Team photos start blacked out. Clicking the hammer fires one lightning bolt at every
+    // photo at the same instant; each bolt flickers twice, like a real strike.
     const tHammer = document.getElementById('teamHammer'), tWrap = document.querySelector('.team-wrap');
-    const tGrid = document.querySelector('.team-grid');
     const tcv = document.getElementById('teamCanvas'), tctx = tcv.getContext('2d');
-    const SPEED = 2.4;                                   // px per ms
-    let tWires = [], tRAF = 0, tBusy = false;
-    function wire(points, width) {
-      const pts = [points[0]];
-      for (let s = 1; s < points.length; s++) {
-        const [x1, y1] = points[s - 1], [x2, y2] = points[s], len = Math.hypot(x2 - x1, y2 - y1);
-        const n = Math.max(2, Math.round(len / 9)), nx = -(y2 - y1) / (len || 1), ny = (x2 - x1) / (len || 1);
-        for (let k = 1; k <= n; k++) {
-          const f = k / n, o = k === n ? 0 : (Math.random() - .5) * Math.min(9, len * .08);
-          pts.push([x1 + (x2 - x1) * f + nx * o, y1 + (y2 - y1) * f + ny * o]);
-        }
-      }
-      let len = 0;
-      for (let k = 1; k < pts.length; k++) len += Math.hypot(pts[k][0] - pts[k - 1][0], pts[k][1] - pts[k - 1][1]);
-      return { bolt: { pts, width, kids: [] }, len };
+    const GROW = 110;
+    let tBolts = [], tRAF = 0, tBusy = false;
+    function flicker(hold) {                             // strike, dim, re-strike, fade
+      if (hold < 70) return 1;
+      if (hold < 120) return .2;
+      if (hold < 190) return 1;
+      return Math.max(0, 1 - (hold - 190) / 380);
     }
     function tLoop(t) {
       tctx.clearRect(0, 0, tcv.width, tcv.height);
-      tWires = tWires.filter(w => t - w.t0 < w.grow + 650);
+      tBolts = tBolts.filter(b => t - b.t0 < GROW + 570);
       tctx.lineCap = 'round'; tctx.lineJoin = 'round';
-      tWires.forEach(w => {
-        const age = t - w.t0;
+      tBolts.forEach(b => {
+        const age = t - b.t0;
         if (age < 0) return;
-        const k = Math.min(1, age / w.grow), hold = age - w.grow;
-        tctx.globalAlpha = hold < 220 ? 1 : Math.max(0, 1 - (hold - 220) / 430);
-        drawBolt(tctx, w.bolt, k);
-        if (k < 1) {                                     // bright spark riding the front of the charge
-          const p = w.bolt.pts[Math.max(0, Math.ceil(w.bolt.pts.length * k) - 1)];
-          const g = tctx.createRadialGradient(p[0], p[1], 0, p[0], p[1], 10);
-          g.addColorStop(0, 'rgba(255,255,255,1)'); g.addColorStop(1, 'rgba(0,201,232,0)');
-          tctx.fillStyle = g; tctx.beginPath(); tctx.arc(p[0], p[1], 10, 0, Math.PI * 2); tctx.fill();
-        }
+        tctx.globalAlpha = age < GROW ? 1 : flicker(age - GROW);
+        drawBolt(tctx, b.bolt, Math.min(1, age / GROW));
       });
       tctx.globalAlpha = 1;
-      tRAF = tWires.length ? requestAnimationFrame(tLoop) : 0;
+      tRAF = tBolts.length ? requestAnimationFrame(tLoop) : 0;
     }
     async function strikeTeam() {
       if (tBusy) return;
@@ -2803,44 +2787,28 @@
       tHammer.classList.add('charged');
       await tHammer.animate([
         { transform: 'rotate(180deg)' },
-        { transform: 'rotate(180deg) translateY(12px) scale(1.06)', offset: .7 },
-        { transform: 'rotate(180deg) translateY(-4px) scale(1.02)' }
-      ], { duration: 420, easing: 'cubic-bezier(.3,.7,.2,1)' }).finished;
+        { transform: 'rotate(180deg) translateY(-10px) scale(1.04)', offset: .6 },
+        { transform: 'rotate(180deg) translateY(8px) scale(1.08)' }
+      ], { duration: 460, easing: 'cubic-bezier(.4,0,.2,1)' }).finished;
 
-      const dpr = Math.min(2, devicePixelRatio || 1), wr = tWrap.getBoundingClientRect(), gr = tGrid.getBoundingClientRect();
+      // every photo gets struck at the same moment
+      const dpr = Math.min(2, devicePixelRatio || 1), wr = tWrap.getBoundingClientRect();
       tcv.width = wr.width * dpr; tcv.height = wr.height * dpr; tctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      const hr = tHammer.getBoundingClientRect(), X = v => v - wr.left, Y = v => v - wr.top;
-      const hx = X(hr.left + hr.width / 2), hy = Y(hr.bottom) - 4, busY = Y(gr.top) - 16;
-      const gap = parseFloat(getComputedStyle(tGrid).columnGap) || 20;
-      const t0 = performance.now() + 30;
-
-      // trunk: hammer -> bus line above the grid
-      const trunk = wire([[hx, hy], [hx, busY]], 2.4);
-      const trunkMs = trunk.len / SPEED;
-      tWires.push({ t0, grow: trunkMs, bolt: trunk.bolt });
-
-      // one branch per photo, routed along the bus and down the column gaps
-      const firstRowTop = Math.min(...cards.map(p => p.querySelector('.person-photo').getBoundingClientRect().top));
+      const hr = tHammer.getBoundingClientRect();
+      const hx = hr.left + hr.width / 2 - wr.left, hy = hr.bottom - wr.top - 8, now = performance.now();
       cards.forEach(p => {
         const ph = p.querySelector('.person-photo').getBoundingClientRect();
-        const cx = X(ph.left + ph.width / 2), top = Y(ph.top);
-        let path;
-        if (ph.top - firstRowTop < 4) path = [[hx, busY], [cx, busY], [cx, top]];
-        else {
-          const gx = X(ph.left) - gap / 2;
-          path = [[hx, busY], [gx, busY], [gx, top - 14], [cx, top - 14], [cx, top]];
-        }
-        const br = wire(path, 1.5), ms = br.len / SPEED;
-        tWires.push({ t0: t0 + trunkMs, grow: ms, bolt: br.bolt });
-        setTimeout(() => {
-          p.classList.add('lit', 'zap');
-          setTimeout(() => p.classList.remove('zap'), 1150);
-        }, 30 + trunkMs + ms);
+        const tx = ph.left + ph.width * (.4 + Math.random() * .2) - wr.left, ty = ph.top + ph.height * (.12 + Math.random() * .1) - wr.top;
+        tBolts.push({ t0: now, bolt: makeBolt(hx, hy, Math.atan2(ty - hy, tx - hx), Math.hypot(tx - hx, ty - hy), 1.9) });
       });
       if (!tRAF) tRAF = requestAnimationFrame(tLoop);
-      await wait(900);
+      tHammer.animate([{ transform: 'rotate(180deg) translateY(8px) scale(1.08)' }, { transform: 'rotate(180deg)' }], { duration: 500, easing: 'cubic-bezier(.2,.7,.2,1)' });
+      await wait(GROW);
+      cards.forEach(p => { p.classList.add('lit', 'zap'); setTimeout(() => p.classList.remove('zap'), 1150); });
+      shake(tWrap.querySelector('.team-grid'), 6, 260);
+      await wait(700);
       tHammer.classList.remove('charged');
-      await wait(500);
+      await wait(400);
       tBusy = false;
     }
     tHammer.addEventListener('click', strikeTeam);
