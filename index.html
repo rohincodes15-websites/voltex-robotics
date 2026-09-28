@@ -13,7 +13,7 @@
     })();
   </script>
   <title>VOLTEX Robotics | FIRST Tech Challenge</title>
-  <meta name="description" content="VOLTEX is a FIRST Tech Challenge robotics team building, coding, and competing in the 2026 season.">
+  <meta name="description" content="VOLTEX (FTC #38557) is a FIRST Tech Challenge robotics team building, coding, and competing in the 2026 season.">
   <link rel="icon" href="assets/logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -505,6 +505,87 @@
     .wordmark.lit .wm-fill { animation: wmLit .9s var(--ease); }
     @keyframes wmLit { 0% { filter: none; } 12% { filter: brightness(1.8) drop-shadow(0 0 18px rgba(0, 201, 232, .8)); } 100% { filter: none; } }
     @media (hover: none) { .wm-glow { display: none; } }
+
+    /* TEAM NUMBER VAULT */
+    .vault {
+      position: relative;
+      margin-top: 28px;
+      max-width: 300px;
+      padding: 18px 18px 16px;
+      border-radius: 18px;
+      background: var(--dark);
+      border: 1px solid var(--dark-border);
+      color: #cfd6de;
+      overflow: hidden;
+      transition: box-shadow .8s var(--ease), border-color .8s;
+    }
+    .vault::before {
+      content: ''; position: absolute; inset: 0; pointer-events: none;
+      background: radial-gradient(60% 45% at 50% 42%, rgba(0, 201, 232, .12), transparent 70%);
+      opacity: .6; transition: opacity .8s;
+    }
+    .vault .label { color: #7c8794; position: relative; }
+    .vault-top { display: flex; justify-content: space-between; position: relative; z-index: 2; }
+    .vault-status { transition: color .4s; }
+    .vault-canvas { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 3; }
+
+    .vault-dial {
+      position: relative; z-index: 1;
+      display: block; width: 176px; aspect-ratio: 1; margin: 14px auto 16px;
+      padding: 0; border: 0; background: none; border-radius: 50%;
+      cursor: pointer; -webkit-tap-highlight-color: transparent;
+    }
+    .vault-dial:focus-visible { outline: 2px solid var(--accent-bright); outline-offset: 4px; }
+    .vault-dial svg { width: 100%; height: 100%; overflow: visible; display: block; }
+    .vd-pointer { fill: var(--accent-bright); }
+    .vd-ring { fill: #10151a; stroke: #2a323b; stroke-width: 2; }
+    .vd-face { transform-box: view-box; transform-origin: 100px 100px; transition: transform 1s cubic-bezier(.3, .75, .25, 1); }
+    .vd-ticks { stroke: #56616d; stroke-width: 1.4; stroke-linecap: round; }
+    .vd-nums text { fill: #9aa5b1; font: 500 13px var(--mono); text-anchor: middle; }
+    .vd-knob { fill: #1c232a; stroke: #3a444e; stroke-width: 1.5; }
+    .vd-grip rect { fill: #3a444e; }
+    .vd-cap { fill: #0b0f14; stroke: #3a444e; stroke-width: 1.5; }
+    .vault-dial:hover .vd-knob { stroke: #56616d; }
+    .vault-dial:active svg { scale: .98; }
+
+    .vault-code { position: relative; z-index: 2; display: flex; justify-content: center; align-items: center; gap: 6px; }
+    .vault-code i { font-style: normal; font: 600 22px var(--mono); color: #3a444e; width: 0; overflow: hidden; opacity: 0; transition: width .5s var(--ease), opacity .5s; }
+    .vault-code span {
+      width: 36px; height: 46px;
+      display: flex; align-items: center; justify-content: center;
+      border-radius: 8px; border: 1px solid #2a323b; background: #10151a;
+      font: 600 24px var(--mono); color: #e8edf2;
+      transition: border-color .4s, color .4s, text-shadow .4s, background .4s;
+    }
+    .vault-code span:empty::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: #2a323b; }
+    .vault-code span.in { border-color: #3a444e; animation: digitIn .45s var(--ease); }
+    @keyframes digitIn { from { transform: translateY(-10px) scale(.9); opacity: 0; } to { transform: none; opacity: 1; } }
+    .vault-hint { display: block; text-align: center; margin-top: 12px; min-height: 1.6em; }
+    .vault-hint button { font: inherit; color: var(--accent-bright); background: none; border: 0; cursor: pointer; padding: 0; }
+
+    .vault-bolt {
+      position: absolute; top: 50%; z-index: 2;
+      width: 22px; height: 8px; margin-top: -4px; border-radius: 3px;
+      background: linear-gradient(#56616d, #2a323b);
+      transition: transform .6s cubic-bezier(.6, 0, .3, 1), opacity .6s;
+    }
+    .vb-l { left: -6px; } .vb-r { right: -6px; }
+
+    .vault.open { border-color: rgba(0, 201, 232, .5); box-shadow: 0 0 40px -12px rgba(0, 201, 232, .6); }
+    .vault.open::before { opacity: 1; }
+    .vault.open .vault-status { color: var(--accent-bright); }
+    .vault.open .vb-l { transform: translateX(-24px); opacity: 0; }
+    .vault.open .vb-r { transform: translateX(24px); opacity: 0; }
+    .vault.open .vault-code i { width: 16px; opacity: 1; color: var(--accent-bright); }
+    .vault.open .vault-code span { border-color: rgba(0, 201, 232, .55); background: rgba(0, 201, 232, .08); color: var(--accent-bright); text-shadow: 0 0 12px rgba(0, 201, 232, .7); }
+    .vault.open .vd-ring { stroke: rgba(0, 201, 232, .6); }
+    .vault.open .vault-code span:nth-of-type(2) { transition-delay: .05s; } .vault.open .vault-code span:nth-of-type(3) { transition-delay: .1s; }
+    .vault.open .vault-code span:nth-of-type(4) { transition-delay: .15s; } .vault.open .vault-code span:nth-of-type(5) { transition-delay: .2s; }
+    .vault.open .vault-code span:nth-of-type(6) { transition-delay: .25s; }
+    .vault.shake { animation: vaultShake .35s linear; }
+    @keyframes vaultShake { 20% { translate: -3px 0; } 40% { translate: 3px 0; } 60% { translate: -2px 0; } 80% { translate: 2px 0; } }
+
+    @media (max-width: 960px) { .vault { max-width: 340px; } }
 
     /* SECTION INDEX */
     .index {
@@ -1457,7 +1538,7 @@
     <div class="wrap">
       <div class="hero-grid">
         <div>
-          <div class="label fade-in" style="animation-delay:.05s"><b>●</b>&nbsp; FIRST Tech Challenge · 2026 season</div>
+          <div class="label fade-in" style="animation-delay:.05s"><b>●</b>&nbsp; FIRST Tech Challenge · Team #38557 · 2026 season</div>
           <h1>
             <span class="line"><span>We build</span></span>
             <span class="line"><span>robots that</span></span>
@@ -1502,10 +1583,31 @@
         <dl class="facts reveal">
           <div><dt>Founded</dt><dd>2026</dd></div>
           <div><dt>Program</dt><dd>FIRST Tech Challenge</dd></div>
+          <div><dt>Team #</dt><dd>38557</dd></div>
           <div><dt>Co-founders</dt><dd>Tarun, Achintya, Rohin</dd></div>
           <div><dt>Members</dt><dd>8 and growing</dd></div>
           <div><dt>Follow</dt><dd><a href="https://www.instagram.com/voltex.robotics/" target="_blank" rel="noopener">@voltex.robotics ↗</a></dd></div>
         </dl>
+        <div class="vault reveal" id="vault">
+          <canvas class="vault-canvas" aria-hidden="true"></canvas>
+          <span class="vault-bolt vb-l" aria-hidden="true"></span><span class="vault-bolt vb-r" aria-hidden="true"></span>
+          <div class="vault-top label"><span>FTC team vault</span><span class="vault-status" id="vaultStatus">Locked</span></div>
+          <button class="vault-dial" id="vaultDial" aria-label="Spin the dial to enter the next digit of our team number">
+            <svg viewBox="0 0 200 200" aria-hidden="true">
+              <path class="vd-pointer" d="M100 2l-6 10h12z" />
+              <circle class="vd-ring" cx="100" cy="100" r="93" />
+              <g class="vd-face" id="vaultFace">
+                <path class="vd-ticks" d="M100.0 10.0L100.0 20.0M111.3 10.7L110.7 15.7M122.4 12.8L121.1 17.7M133.1 16.3L131.3 21.0M143.4 21.1L140.9 25.5M152.9 27.2L147.0 35.3M161.6 34.4L158.2 38.0M169.3 42.6L165.5 45.8M176.0 51.8L171.8 54.5M181.4 61.7L176.9 63.8M185.6 72.2L176.1 75.3M188.4 83.1L183.5 84.1M189.8 94.3L184.8 94.7M189.8 105.7L184.8 105.3M188.4 116.9L183.5 115.9M185.6 127.8L176.1 124.7M181.4 138.3L176.9 136.2M176.0 148.2L171.8 145.5M169.3 157.4L165.5 154.2M161.6 165.6L158.2 162.0M152.9 172.8L147.0 164.7M143.4 178.9L140.9 174.5M133.1 183.7L131.3 179.0M122.4 187.2L121.1 182.3M111.3 189.3L110.7 184.3M100.0 190.0L100.0 180.0M88.7 189.3L89.3 184.3M77.6 187.2L78.9 182.3M66.9 183.7L68.7 179.0M56.6 178.9L59.1 174.5M47.1 172.8L53.0 164.7M38.4 165.6L41.8 162.0M30.7 157.4L34.5 154.2M24.0 148.2L28.2 145.5M18.6 138.3L23.1 136.2M14.4 127.8L23.9 124.7M11.6 116.9L16.5 115.9M10.2 105.7L15.2 105.3M10.2 94.3L15.2 94.7M11.6 83.1L16.5 84.1M14.4 72.2L23.9 75.3M18.6 61.7L23.1 63.8M24.0 51.8L28.2 54.5M30.7 42.6L34.5 45.8M38.4 34.4L41.8 38.0M47.1 27.2L53.0 35.3M56.6 21.1L59.1 25.5M66.9 16.3L68.7 21.0M77.6 12.8L78.9 17.7M88.7 10.7L89.3 15.7" />
+                <g class="vd-nums"><text x="100.0" y="36.0">0</text><text x="140.0" y="49.0">1</text><text x="164.7" y="83.0">2</text><text x="164.7" y="125.0">3</text><text x="140.0" y="159.0">4</text><text x="100.0" y="172.0">5</text><text x="60.0" y="159.0">6</text><text x="35.3" y="125.0">7</text><text x="35.3" y="83.0">8</text><text x="60.0" y="49.0">9</text></g>
+                <circle class="vd-knob" cx="100" cy="100" r="42" />
+                <g class="vd-grip"><rect x="98" y="58" width="4" height="8" rx="2" transform="rotate(0.0 100 100)" /><rect x="98" y="58" width="4" height="8" rx="2" transform="rotate(22.5 100 100)" /><rect x="98" y="58" width="4" height="8" rx="2" transform="rotate(45.0 100 100)" /><rect x="98" y="58" width="4" height="8" rx="2" transform="rotate(67.5 100 100)" /><rect x="98" y="58" width="4" height="8" rx="2" transform="rotate(90.0 100 100)" /><rect x="98" y="58" width="4" height="8" rx="2" transform="rotate(112.5 100 100)" /><rect x="98" y="58" width="4" height="8" rx="2" transform="rotate(135.0 100 100)" /><rect x="98" y="58" width="4" height="8" rx="2" transform="rotate(157.5 100 100)" /><rect x="98" y="58" width="4" height="8" rx="2" transform="rotate(180.0 100 100)" /><rect x="98" y="58" width="4" height="8" rx="2" transform="rotate(202.5 100 100)" /><rect x="98" y="58" width="4" height="8" rx="2" transform="rotate(225.0 100 100)" /><rect x="98" y="58" width="4" height="8" rx="2" transform="rotate(247.5 100 100)" /><rect x="98" y="58" width="4" height="8" rx="2" transform="rotate(270.0 100 100)" /><rect x="98" y="58" width="4" height="8" rx="2" transform="rotate(292.5 100 100)" /><rect x="98" y="58" width="4" height="8" rx="2" transform="rotate(315.0 100 100)" /><rect x="98" y="58" width="4" height="8" rx="2" transform="rotate(337.5 100 100)" /></g>
+                <circle class="vd-cap" cx="100" cy="100" r="14" />
+              </g>
+            </svg>
+          </button>
+          <div class="vault-code" id="vaultCode" aria-live="polite"><i>#</i><span></span><span></span><span></span><span></span><span></span></div>
+          <p class="vault-hint label" id="vaultHint">Click the dial to crack our team number</p>
+        </div>
       </aside>
       <div class="about-body">
         <p class="about-quote" id="scrub">We started VOLTEX in 2026 because we love building things. Now we're a team of eight, working on one robot together.</p>
@@ -1821,7 +1923,7 @@
         </div>
       </div>
       <div class="foot-bottom label">
-        <span>© 2026 Team VOLTEX</span>
+        <span>© 2026 Team VOLTEX · FTC #38557</span>
         <span>FIRST® Tech Challenge</span>
         <button class="totop" id="totop">Back to top
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19V5M6 11l6-6 6 6" /></svg></button>
@@ -2183,6 +2285,78 @@
       wm.style.setProperty('--wm', (reduce ? 100 : q * 100) + '%');
       if (q >= 1 && !wmPowered) { wmPowered = true; wmPowerOn(); }
     }
+    // Team number vault: each click spins the dial to the next digit of 38557
+    const vault = document.getElementById('vault'), dial = document.getElementById('vaultDial');
+    const face = document.getElementById('vaultFace'), slots = [...vault.querySelectorAll('.vault-code span')];
+    const vStatus = document.getElementById('vaultStatus'), vHint = document.getElementById('vaultHint');
+    const CODE = [3, 8, 5, 5, 7], HINT = vHint.textContent;
+    let vIdx = 0, vAngle = 0, vBusy = false;
+    const vc = vault.querySelector('.vault-canvas'), vctx = vc.getContext('2d');
+    let vBolts = [], vRAF = 0;
+    function vLoop(t) {
+      vctx.clearRect(0, 0, vc.width, vc.height);
+      vBolts = vBolts.filter(b => t - b.t0 < 650);
+      vctx.lineCap = 'round'; vctx.lineJoin = 'round';
+      vBolts.forEach(b => {
+        const age = t - b.t0;
+        if (age < 0) return;
+        vctx.globalAlpha = Math.max(0, 1 - age / 650);
+        drawBolt(vctx, b.bolt, Math.min(1, age / 140));
+      });
+      vctx.globalAlpha = 1;
+      vRAF = vBolts.length ? requestAnimationFrame(vLoop) : 0;
+    }
+    function spinTo(angle, ms) {
+      face.style.transitionDuration = reduce ? '0s' : ms + 'ms';
+      face.style.transform = `rotate(${angle}deg)`;
+      vAngle = angle;
+      return new Promise(r => setTimeout(r, reduce ? 0 : ms));
+    }
+    async function vaultClick() {
+      if (vBusy || vIdx >= CODE.length) return;
+      vBusy = true;
+      const d = CODE[vIdx], target = -d * 36, dir = vIdx % 2 ? -1 : 1;
+      const mod = n => ((n % 360) + 360) % 360;
+      const next = dir > 0 ? vAngle + 360 + mod(target - vAngle) : vAngle - 360 - mod(vAngle - target);
+      vStatus.textContent = `Digit ${vIdx + 1} / 5`;
+      await spinTo(next, 950);
+      slots[vIdx].textContent = d;
+      slots[vIdx].classList.add('in');
+      vIdx++;
+      vBusy = false;
+      if (vIdx === CODE.length) unlockVault();
+    }
+    async function unlockVault() {
+      vBusy = true;
+      vStatus.textContent = 'Unlocking…';
+      if (!reduce) { vault.classList.add('shake'); await new Promise(r => setTimeout(r, 360)); vault.classList.remove('shake'); }
+      vault.classList.add('open');
+      vStatus.textContent = 'Access granted';
+      vHint.innerHTML = 'VOLTEX · FTC Team #38557 &nbsp;<button type="button">Lock again ↺</button>';
+      vHint.querySelector('button').addEventListener('click', lockVault);
+      spinTo(vAngle + 720, 1200);
+      if (!reduce) {
+        const dpr = Math.min(2, devicePixelRatio || 1), r = vault.getBoundingClientRect(), dr = dial.getBoundingClientRect();
+        vc.width = r.width * dpr; vc.height = r.height * dpr;
+        vctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        const cx = dr.left - r.left + dr.width / 2, cy = dr.top - r.top + dr.height / 2, now = performance.now();
+        for (let i = 0; i < 9; i++) {
+          vBolts.push({ t0: now + i * 45, bolt: makeBolt(cx, cy, i * (Math.PI * 2 / 9) + Math.random() * .4, r.width * (.45 + Math.random() * .3), 1.3) });
+        }
+        if (!vRAF) vRAF = requestAnimationFrame(vLoop);
+      }
+      vBusy = false;
+    }
+    function lockVault() {
+      vault.classList.remove('open');
+      slots.forEach(sl => { sl.textContent = ''; sl.classList.remove('in'); });
+      vIdx = 0;
+      vStatus.textContent = 'Locked';
+      vHint.textContent = HINT;
+      spinTo(0, 800);
+    }
+    dial.addEventListener('click', vaultClick);
+
     // Wordmark electricity
     let wmPowered = false, wmBolts = [], wmRAF = 0, wmLast = 0;
     const wc = wm.querySelector('.wm-canvas'), wctx = wc.getContext('2d');
