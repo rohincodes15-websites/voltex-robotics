@@ -1081,6 +1081,24 @@
     @keyframes bp2 { 0%, 47% { stroke-dashoffset: 1; } 57%, 94% { stroke-dashoffset: 0; opacity: 1; } 100% { stroke-dashoffset: 0; opacity: 0; } }
     @keyframes bp3 { 0%, 80% { stroke-dashoffset: 1; } 90%, 94% { stroke-dashoffset: 0; opacity: 1; } 100% { stroke-dashoffset: 0; opacity: 0; } }
 
+    /* Third hit finishes the robot: a bolt jumps from the gear and powers it up */
+    .bp-robot { animation: bpPower 5.4s infinite; }
+    .hw-hammer use { animation: hwCharge 5.4s infinite; }
+    .hw-bolt { fill: none; stroke: var(--accent-bright); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1; stroke-dashoffset: 1; opacity: 0; animation: hwBolt 5.4s infinite; }
+    .hw-ring { fill: none; stroke: var(--accent); stroke-width: 1.2; transform-box: fill-box; transform-origin: center; opacity: 0; animation: hwRing 5.4s infinite; }
+    @keyframes hwCharge {
+      0%, 80% { filter: drop-shadow(0 0 0 rgba(0, 201, 232, 0)); }
+      84%, 90% { filter: drop-shadow(0 0 6px rgba(0, 201, 232, .9)) brightness(1.2); }
+      96%, 100% { filter: drop-shadow(0 0 0 rgba(0, 201, 232, 0)); }
+    }
+    @keyframes hwBolt { 0%, 89% { stroke-dashoffset: 1; opacity: 0; } 89.5% { opacity: 1; } 91%, 92.5% { stroke-dashoffset: 0; opacity: 1; } 95%, 100% { stroke-dashoffset: 0; opacity: 0; } }
+    @keyframes bpPower {
+      0%, 91% { filter: drop-shadow(0 0 0 rgba(0, 201, 232, 0)); }
+      93% { filter: drop-shadow(0 0 5px rgba(0, 201, 232, .95)); }
+      99%, 100% { filter: drop-shadow(0 0 0 rgba(0, 201, 232, 0)); }
+    }
+    @keyframes hwRing { 0%, 91.5% { opacity: 0; transform: scale(.6); } 92.5% { opacity: .8; } 99%, 100% { opacity: 0; transform: scale(1.35); } }
+
     .hw-anvil { fill: var(--soft); stroke: var(--ink); stroke-width: 1.6; stroke-linejoin: round; }
     .gear-teeth { fill: none; stroke: var(--ink); stroke-width: 8; stroke-dasharray: .5 .5; }
     .hw-core { fill: var(--surface); stroke: var(--ink); stroke-width: 1.6; animation: hwHit 1.8s infinite; }
@@ -1789,6 +1807,8 @@
                 <path class="bp-ghost" d="M32 72V38h10v34M32 55h10" /><g class="bp-part bp-p2"><path d="M32 72V38h10v34" pathLength="1" /><path d="M32 55h10" pathLength="1" /></g>
                 <path class="bp-ghost" d="M42 42h14M56 42l5-5h6M56 42l5 5h6" /><g class="bp-part bp-p3"><path d="M42 42h14" pathLength="1" /><path d="M56 42l5-5h6M56 42l5 5h6" pathLength="1" /></g>
               </g>
+              <circle class="hw-ring" cx="38" cy="66" r="30" />
+              <path class="hw-bolt" d="M90 88L82 81L76 87L63 80" pathLength="1" />
               <g class="hw-rig">
                 <path class="hw-anvil" d="M58 112L80 108H146V118H132L126 128H136V140H84V128H94L88 118H80Z" />
                 <g class="hw-gear">
@@ -2839,7 +2859,9 @@
     }
 
     // One scroll gesture = one season card while the section is pinned.
-    const g = { start: 0, last: 0, prev: 0, used: false, exit: false };
+    // Gestures are told apart by scroll speed (px/ms), not raw deltas, so trackpad momentum and
+    // events the browser batches up while the page is busy don't read as a fresh scroll.
+    const g = { start: 0, last: -1e9, dense: false, low: Infinity, peak: 0, used: false, exit: false };
     function hsState() {
       if (!pinned.matches || reduce) return null;
       const r = hs.getBoundingClientRect();
@@ -2859,11 +2881,17 @@
       return null;
     }
     addEventListener('wheel', e => {
-      const now = performance.now(), d = Math.abs(e.deltaY);
-      const steady = d > 4 && d >= g.prev * .98;
-      const fresh = now - g.last > 160 || (steady && now - g.start > 1000) || (d > 12 && d > g.prev * 1.6 && now - g.start > 250);
-      if (fresh) Object.assign(g, { start: now, used: false, exit: false });
-      g.last = now; g.prev = d;
+      const now = performance.now(), d = Math.abs(e.deltaY) * (e.deltaMode === 1 ? 40 : e.deltaMode === 2 ? innerHeight : 1);
+      if (d) {
+        const dt = now - g.last, rate = d / Math.min(400, Math.max(16, dt));
+        const fresh = dt > (g.dense ? 400 : 180)
+          || (now - g.start > 120 && rate > .5 && rate > g.low * 3)
+          || (now - g.start > 900 && rate > .5 && rate >= g.peak * .7);
+        if (fresh) Object.assign(g, { start: now, low: Infinity, peak: 0, used: false, exit: false });
+        g.last = now; g.dense = dt < 50;
+        g.peak = Math.max(g.peak, rate);
+        if (now - g.start > 120) g.low = Math.min(g.low, rate);
+      }
 
       const st = hsState();
       if (!st) {
