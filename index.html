@@ -2118,7 +2118,12 @@
       if (!nav.classList.contains('open')) nav.classList.toggle('hide', y > lastY && y > 300);
       lastY = y; ticking = false;
     }
-    addEventListener('scroll', () => { if (!ticking) { requestAnimationFrame(onScroll); ticking = true; } }, { passive: true });
+    // every scroll-driven update runs once per frame from here
+    addEventListener('scroll', () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => { onScroll(); onSpringScroll(); onScrub(); onIndexScroll(); hsUpdate(); });
+    }, { passive: true });
 
     const links = [...document.querySelectorAll('.nav-links a')];
     const so = new IntersectionObserver(es => es.forEach(e => {
@@ -2487,34 +2492,40 @@
       barSpring(max > 0 ? scrollY / max : 0);
       badgeSpring(Math.min(1, scrollY / (innerHeight * .8)));
     }
-    addEventListener('scroll', onSpringScroll, { passive: true });
     onSpringScroll();
 
     // Marquee: steady drift, nudged by scroll speed
     const track = document.getElementById('marquee');
-    let mx = 0, vel = 0, prevY = scrollY;
+    let mx = 0, vel = 0, prevY = scrollY, half = 0, driftRAF = 0;
     function drift() {
       const dy = scrollY - prevY; prevY = scrollY;
       vel += (dy * .15 - vel) * .1;
       mx -= .5 + Math.abs(vel);
-      const half = track.scrollWidth / 2;
-      if (-mx >= half) mx += half;
+      if (half && -mx >= half) mx += half;
       track.style.transform = `translate3d(${mx}px,0,0)`;
-      requestAnimationFrame(drift);
+      driftRAF = requestAnimationFrame(drift);
     }
-    if (!reduce) drift();
+    if (!reduce) {
+      const measure = () => half = track.scrollWidth / 2;
+      measure(); addEventListener('resize', measure); document.fonts.ready.then(measure);
+      // only run while the marquee is on screen
+      new IntersectionObserver(([e]) => {
+        cancelAnimationFrame(driftRAF); driftRAF = 0;
+        if (e.isIntersecting) { prevY = scrollY; vel = 0; drift(); }
+      }).observe(track);
+    }
 
     // Words light up as the paragraph scrolls through view
     const scrub = document.getElementById('scrub');
     scrub.innerHTML = scrub.textContent.split(' ').map(w => `<span class="w">${w}</span>`).join(' ');
     const words = [...scrub.querySelectorAll('.w')];
     const wm = document.getElementById('wordmark');
+    let scrubN = -1;
     function onScrub() {
-      const r = scrub.getBoundingClientRect();
+      const r = scrub.getBoundingClientRect(), f = wm.getBoundingClientRect();
       const p = Math.min(1, Math.max(0, (innerHeight * .85 - r.top) / (innerHeight * .5)));
-      const n = Math.round(p * words.length);
-      words.forEach((w, i) => w.classList.toggle('on', reduce || i < n));
-      const f = wm.getBoundingClientRect();
+      const n = reduce ? words.length : Math.round(p * words.length);
+      if (n !== scrubN) { scrubN = n; words.forEach((w, i) => w.classList.toggle('on', i < n)); }
       const q = Math.min(1, Math.max(0, (innerHeight - f.top) / (f.height * 1.15)));
       wm.style.setProperty('--wm', (reduce ? 100 : q * 100) + '%');
       if (q >= 1 && !wmPowered) { wmPowered = true; wmPowerOn(); }
@@ -2688,7 +2699,6 @@
       });
     }
 
-    addEventListener('scroll', onScrub, { passive: true });
     onScrub();
 
     // Section index
@@ -2699,11 +2709,11 @@
     }), { rootMargin: '-45% 0px -50% 0px' });
     document.querySelectorAll('section[id]').forEach(sec => idxIO.observe(sec));
     const heroEl = document.querySelector('.hero');
-    addEventListener('scroll', () => {
+    function onIndexScroll() {
       const pastHero = scrollY > heroEl.offsetHeight * .7;
       const nearEnd = scrollY + innerHeight > document.documentElement.scrollHeight - 300;
       index.classList.toggle('show', pastHero && !nearEnd);
-    }, { passive: true });
+    }
 
     // Role cards: feed the cursor position to the spotlight
     document.querySelectorAll('.role').forEach(card => card.addEventListener('pointermove', e => {
@@ -2857,7 +2867,6 @@
       const i = Math.min(steps.length - 1, Math.round(p * (steps.length - 1)));
       if (i !== cur) { cur = i; setStep(i); }
     }
-    addEventListener('scroll', hsUpdate, { passive: true });
     addEventListener('resize', hsLayout);
     pinned.addEventListener('change', hsLayout);
     document.fonts.ready.then(hsLayout);
