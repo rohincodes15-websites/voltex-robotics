@@ -1076,7 +1076,7 @@
     .bp-label { font: 500 8px var(--mono); fill: var(--muted); letter-spacing: .08em; }
     .bp-ghost, .bp-ghost * { fill: none; stroke: var(--line-hover); stroke-width: 1.2; stroke-dasharray: 2 3; }
     .bp-part, .bp-part * { fill: none; stroke: var(--accent); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1; stroke-dashoffset: 1; }
-    .bp-p1 { animation: bp1 5.4s infinite; } .bp-p2 * { animation: bp2 5.4s infinite; } .bp-p3 { animation: bp3 5.4s infinite; }
+    .bp-p1 * { animation: bp1 5.4s infinite; } .bp-p2 * { animation: bp2 5.4s infinite; } .bp-p3 * { animation: bp3 5.4s infinite; }
     @keyframes bp1 { 0%, 14% { stroke-dashoffset: 1; } 24%, 94% { stroke-dashoffset: 0; opacity: 1; } 100% { stroke-dashoffset: 0; opacity: 0; } }
     @keyframes bp2 { 0%, 47% { stroke-dashoffset: 1; } 57%, 94% { stroke-dashoffset: 0; opacity: 1; } 100% { stroke-dashoffset: 0; opacity: 0; } }
     @keyframes bp3 { 0%, 80% { stroke-dashoffset: 1; } 90%, 94% { stroke-dashoffset: 0; opacity: 1; } 100% { stroke-dashoffset: 0; opacity: 0; } }
@@ -1784,9 +1784,10 @@
               <rect class="bp-grid" x="0" y="0" width="240" height="150" fill="url(#bpGrid)" />
               <text class="bp-label" x="8" y="14">CAD</text>
               <g class="bp-robot">
-                <path class="bp-ghost" d="M12 66h50v20H12z" /><path class="bp-part bp-p1" d="M12 66h50v20H12z" pathLength="1" />
-                <g class="bp-ghost"><circle cx="22" cy="92" r="7" /><circle cx="52" cy="92" r="7" /></g><g class="bp-part bp-p2"><circle cx="22" cy="92" r="7" pathLength="1" /><circle cx="52" cy="92" r="7" pathLength="1" /></g>
-                <path class="bp-ghost" d="M36 66L48 42L64 36" /><path class="bp-part bp-p3" d="M36 66L48 42L64 36" pathLength="1" />
+                <g class="bp-ghost"><path d="M12 72h50v14H12z" /><circle cx="21" cy="90" r="7" /><circle cx="53" cy="90" r="7" /></g>
+                <g class="bp-part bp-p1"><path d="M12 72h50v14H12z" pathLength="1" /><circle cx="21" cy="90" r="7" pathLength="1" /><circle cx="53" cy="90" r="7" pathLength="1" /><circle cx="21" cy="90" r="1.8" pathLength="1" /><circle cx="53" cy="90" r="1.8" pathLength="1" /></g>
+                <path class="bp-ghost" d="M32 72V38h10v34M32 55h10" /><g class="bp-part bp-p2"><path d="M32 72V38h10v34" pathLength="1" /><path d="M32 55h10" pathLength="1" /></g>
+                <path class="bp-ghost" d="M42 42h14M56 42l5-5h6M56 42l5 5h6" /><g class="bp-part bp-p3"><path d="M42 42h14" pathLength="1" /><path d="M56 42l5-5h6M56 42l5 5h6" pathLength="1" /></g>
               </g>
               <g class="hw-rig">
                 <path class="hw-anvil" d="M58 112L80 108H146V118H132L126 128H136V140H84V128H94L88 118H80Z" />
