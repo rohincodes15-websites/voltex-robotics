@@ -1635,16 +1635,19 @@
           }
           return d + `L${x2} ${y2}`;
         };
-        const bolt = (d, w, cls) => {
+        const bolt = (pts, w, cls) => {
           const p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-          p.setAttribute('d', d); p.setAttribute('stroke-width', w);
+          p._pts = pts; p.setAttribute('d', jag(...pts)); p.setAttribute('stroke-width', w);
           p.classList.add(cls); svg.appendChild(p);
+          return p;
         };
-        [hx - W * .18, hx + W * .04, hx + W * .2].forEach((x, i) => bolt(jag(x, -20, hx, hy, 14, 70), i === 1 ? 4 : 2.5, 'strike'));
+        [hx - W * .18, hx + W * .04, hx + W * .2].forEach((x, i) => bolt([x, -20, hx, hy, 14, 70], i === 1 ? 4 : 2.5, 'strike'));
         for (let i = 0; i < 8; i++) {
           const a = (i / 8) * Math.PI * 2 + Math.random() * .4, len = 90 + Math.random() * 140;
-          bolt(jag(hx, hy, hx + Math.cos(a) * len, hy + Math.sin(a) * len, 6, 26), 1.6, 'spark');
+          bolt([hx, hy, hx + Math.cos(a) * len, hy + Math.sin(a) * len, 6, 26], 1.6, 'spark');
         }
+        // small arcs that crawl around the head once it's charged
+        const arcs = [0, 1, 2, 3, 4].map(() => bolt([hx, hy, hx, hy, 5, 14], 1.3, 'arc'));
         const ring = intro.querySelector('.intro-ring'), flash = intro.querySelector('.intro-flash');
         ring.style.left = hx + 'px'; ring.style.top = hy + 'px';
         flash.style.setProperty('--fx', hx + 'px'); flash.style.setProperty('--fy', hy + 'px');
@@ -1652,27 +1655,46 @@
         const glow = 'drop-shadow(0 0 0px rgba(0,201,232,0)) brightness(1)';
         const hot = 'drop-shadow(0 0 28px rgba(0,201,232,1)) brightness(1.7)';
         const warm = 'drop-shadow(0 0 16px rgba(0,201,232,.6)) brightness(1.1)';
+        // 1. hammer swings down from above, lands, and gets struck
         await animate([
-          // hammer drops in and lands with a squash
-          [ham, { y: ['-60vh', '0vh'], opacity: [0, 1] }, { duration: .45, ease: [.55, 0, .95, .4] }],
-          [ham, { scaleY: [.86, 1], scaleX: [1.1, 1] }, { type: 'spring', bounce: .55, duration: .45 }],
+          [ham, { y: ['-60vh', '0vh'], rotate: [-35, 4], opacity: [0, 1] }, { duration: .5, ease: [.55, 0, .95, .4] }],
+          [ham, { scaleY: [.86, 1], scaleX: [1.1, 1], rotate: [4, 0] }, { type: 'spring', bounce: .55, duration: .45 }],
           ['.intro-mark', { x: [0, -8, 7, -4, 2, 0] }, { duration: .3, at: '<' }],
-          // lightning strikes the head
           ['.intro-bolts .strike', { pathLength: [0, 1], opacity: [1, 1] }, { duration: .16, delay: stagger(.05), ease: 'easeIn', at: '+0.1' }],
+        ]);
+
+        // 2. from impact on: lightning keeps re-forking, arcs crawl the head, hammer floats
+        const strikes = [...svg.querySelectorAll('.strike, .spark')];
+        const crackle = setInterval(() => {
+          strikes.forEach(p => p.setAttribute('d', jag(...p._pts)));
+          arcs.forEach(p => {
+            const a = Math.random() * Math.PI * 2, rx = r.width * .55, ry = r.height * .2;
+            const x1 = hx + Math.cos(a) * rx, y1 = hy + Math.sin(a) * ry;
+            const b = a + (Math.random() - .5) * 2.2;
+            p.setAttribute('d', jag(x1, y1, hx + Math.cos(b) * rx * 1.3, hy + Math.sin(b) * ry * 1.6, 5, 14));
+            p.style.opacity = Math.random() < .7 ? (.5 + Math.random() * .5).toFixed(2) : 0;
+          });
+        }, 55);
+        const buzz = animate(ham, { x: [0, -2, 2, -1, 1, 0] }, { duration: .12, repeat: 5 });
+        buzz.then(() => animate(ham, { y: [0, -10, 0], rotate: [-3, 3, -3] }, { duration: 1.8, repeat: Infinity, ease: 'easeInOut' }));
+
+        await animate([
           'impact',
           [flash, { opacity: [0, .85, 0] }, { duration: .45, at: 'impact' }],
           [ham, { filter: [glow, hot, warm] }, { duration: .7, at: 'impact' }],
           [ring, { scale: [.3, 3.5], opacity: [0, 1, 0] }, { duration: .7, ease: 'easeOut', times: [0, .04, 1], at: 'impact' }],
           ['.intro-mark', { x: [0, -14, 12, -8, 5, -2, 0], y: [0, 6, -4, 3, 0, 0, 0] }, { duration: .4, at: 'impact' }],
-          ['.intro-bolts .strike', { opacity: [1, .2, 1, .4, 0] }, { duration: .5, at: 'impact' }],
-          ['.intro-bolts .spark', { pathLength: [0, 1, 1], opacity: [1, 1, 0] }, { duration: .45, delay: stagger(.025), at: 'impact' }],
-          // name rises in under the charged hammer
-          ['.intro-word span', { y: ['110%', '0%'] }, { delay: stagger(.05), duration: .5, ease: [.2, .7, .2, 1], at: '-0.3' }],
+          ['.intro-bolts .strike', { opacity: [1, .2, 1, .4, .9, .3, 0] }, { duration: .8, at: 'impact' }],
+          ['.intro-bolts .spark', { pathLength: [0, 1, 1], opacity: [1, 1, 0] }, { duration: .6, delay: stagger(.025), at: 'impact' }],
+          ['.intro-word span', { y: ['110%', '0%'] }, { delay: stagger(.05), duration: .5, ease: [.2, .7, .2, 1], at: 'impact' }],
           ['.intro-line', { scaleX: [0, 1] }, { duration: .4, ease: 'easeOut', at: '-0.2' }],
           ['.intro-sub', { opacity: [0, 1], y: [8, 0] }, { duration: .3, at: '-0.2' }],
-          ['.intro-mark', { scale: [1, 1.04], opacity: [1, 0] }, { duration: .3, at: '+0.45' }],
+          [ham, { filter: [warm, hot, warm] }, { duration: .5, at: '+0.1' }],
+          ['.intro-mark', { scale: [1, 1.04], opacity: [1, 0] }, { duration: .3, at: '+0.2' }],
+          [svg, { opacity: [1, 0] }, { duration: .3, at: '<' }],
           [intro, { clipPath: ['inset(0 0 0% 0)', 'inset(0 0 100% 0)'] }, { duration: .7, ease: [.76, 0, .24, 1] }],
         ]);
+        clearInterval(crackle);
         clearTimeout(bail);
         done();
       } catch (e) { clearTimeout(bail); done(); }
