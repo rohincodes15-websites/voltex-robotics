@@ -18,6 +18,17 @@
   </script>
   <title>VOLTEX Robotics | FIRST Tech Challenge</title>
   <meta name="description" content="VOLTEX (FTC #38557) is a FIRST Tech Challenge robotics team building, coding, and competing in the 2026 season.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://voltexftc.vercel.app/">
+  <meta property="og:site_name" content="VOLTEX Robotics">
+  <meta property="og:title" content="VOLTEX Robotics | FTC #38557">
+  <meta property="og:description" content="A high school FIRST Tech Challenge team. We design, build, and code our own robot, and we compete in the 2026 season.">
+  <meta property="og:image" content="https://voltexftc.vercel.app/assets/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="VOLTEX Robotics logo: a hammer charged with lightning">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="theme-color" content="#f5f4ef">
   <link rel="icon" href="assets/logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1549,6 +1560,26 @@
 
     ::view-transition-old(root), ::view-transition-new(root) { animation: none; mix-blend-mode: normal; }
 
+    /* SPONSORS */
+    #sponsors { padding-bottom: clamp(64px, 8vw, 100px); }
+    .spon-head { max-width: 720px; }
+    .spon-head h2 { font-size: clamp(36px, 5vw, 68px); line-height: 1; letter-spacing: -.04em; font-weight: 600; margin: 18px 0 20px; }
+    .spon-head h2 em { font-style: normal; color: var(--accent); }
+    .spon-head p { color: var(--ink-2); font-size: 18px; max-width: 560px; }
+    .spon-uses { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; margin-top: 48px; }
+    .spon-uses > div { background: var(--surface); padding: 28px; }
+    .spon-uses h3 { font-size: 20px; font-weight: 600; letter-spacing: -.02em; margin: 10px 0 6px; }
+    .spon-uses p { font-size: 15px; color: var(--ink-2); line-height: 1.5; }
+    .spon-wall { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 16px; }
+    .spon-slot { display: grid; place-content: center; text-align: center; gap: 6px; min-height: 120px; border: 1px dashed var(--line-hover); border-radius: 16px; font-family: var(--mono); font-size: 12px; color: var(--muted); }
+    .spon-cta { border: 1px solid var(--accent); background: var(--tint); color: var(--accent); font-family: var(--sans); font-size: 17px; font-weight: 600; transition: background-color .3s var(--ease), color .3s var(--ease); }
+    .spon-cta span { font-family: var(--mono); font-size: 11px; font-weight: 400; opacity: .8; }
+    .spon-cta:hover { background: var(--accent); color: var(--on-ink); }
+    @media (max-width: 760px) {
+      .spon-uses { grid-template-columns: 1fr; }
+      .spon-wall { grid-template-columns: 1fr 1fr; }
+    }
+
     /* Entrance intro */
     #intro { display: none; }
     .intro #intro { display: grid; place-items: center; position: fixed; inset: 0; z-index: 9999; background: var(--dark); color: #fff; }
@@ -1671,7 +1702,8 @@
     <a href="#about"><i></i>01 About</a>
     <a href="#pillars"><i></i>02 What we do</a>
     <a href="#team"><i></i>03 Team</a>
-    <a href="#join"><i></i>04 Join</a>
+    <a href="#sponsors"><i></i>04 Sponsors</a>
+    <a href="#join"><i></i>05 Join</a>
   </nav>
 
   <dialog id="pdlg" aria-label="Team member">
@@ -1694,6 +1726,7 @@
         <li><a href="#about">About</a></li>
         <li><a href="#pillars">What we do</a></li>
         <li><a href="#team">Team</a></li>
+        <li><a href="#sponsors">Sponsors</a></li>
         <li><a href="#join">Join</a></li>
       </ul>
       <div class="nav-cta">
@@ -2096,11 +2129,32 @@
     </div>
   </section>
 
+  <section id="sponsors" class="section-border">
+    <div class="wrap">
+      <div class="spon-head reveal">
+        <div class="label">04 — Sponsors</div>
+        <h2>Help us <em>power up.</em></h2>
+        <p>We're a first-year, student-run team. Sponsors cover the parts, tools, and competition fees that get our robot onto the field, and every sponsor gets featured right here.</p>
+      </div>
+      <div class="spon-uses reveal">
+        <div><span class="label">01</span><h3>Robot parts</h3><p>Motors, sensors, and the aluminum our robot is built from.</p></div>
+        <div><span class="label">02</span><h3>Competition fees</h3><p>FIRST registration and travel to league meets.</p></div>
+        <div><span class="label">03</span><h3>Outreach</h3><p>Demos and workshops for younger students.</p></div>
+      </div>
+      <div class="spon-wall reveal" aria-label="Sponsor logos">
+        <div class="spon-slot">Your logo here</div>
+        <div class="spon-slot">Your logo here</div>
+        <div class="spon-slot">Your logo here</div>
+        <a class="spon-slot spon-cta" href="https://www.instagram.com/voltex.robotics/" target="_blank" rel="noopener">Become a sponsor ↗<span>DM @voltex.robotics</span></a>
+      </div>
+    </div>
+  </section>
+
   <section id="join" style="padding-top:0">
     <div class="wrap">
       <div class="join reveal">
         <div>
-          <div class="label">04 — Join</div>
+          <div class="label">05 — Join</div>
           <h2>Want to join<br><em>the team?</em></h2>
           <p>If you like building, coding, or meeting people, we'd love to have you. Fill out the form and we'll get back to you.</p>
           <div class="join-actions">
