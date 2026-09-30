@@ -10,6 +10,10 @@
       try { t = localStorage.getItem('theme'); } catch (e) {}
       if (t !== 'dark' && t !== 'light') t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
       document.documentElement.dataset.theme = t;
+      // entrance intro: once per session, skipped for reduced motion
+      var seen = null;
+      try { seen = sessionStorage.getItem('intro'); } catch (e) {}
+      if (!seen && !matchMedia('(prefers-reduced-motion: reduce)').matches) document.documentElement.classList.add('intro');
     })();
   </script>
   <title>VOLTEX Robotics | FIRST Tech Challenge</title>
@@ -1544,10 +1548,60 @@
     .nav-cta { display: flex; align-items: center; gap: 10px; }
 
     ::view-transition-old(root), ::view-transition-new(root) { animation: none; mix-blend-mode: normal; }
+
+    /* Entrance intro */
+    #intro { display: none; }
+    .intro #intro { display: grid; place-items: center; position: fixed; inset: 0; z-index: 9999; background: var(--dark); color: #fff; }
+    .intro body { overflow: hidden; }
+    .intro .hero *, .intro .hero { animation-play-state: paused !important; }
+    .intro-mark { display: grid; justify-items: center; gap: 18px; }
+    .intro-mark img { width: 88px; height: 88px; object-fit: contain; opacity: 0; filter: drop-shadow(0 0 24px rgba(0, 201, 232, .55)); }
+    .intro-word { display: flex; font: 700 clamp(40px, 9vw, 96px)/1 'Inter Tight', system-ui, sans-serif; letter-spacing: .04em; overflow: hidden; }
+    .intro-word span { display: inline-block; transform: translateY(110%); }
+    .intro-line { width: min(240px, 60vw); height: 2px; background: var(--accent-bright); transform: scaleX(0); box-shadow: 0 0 14px var(--accent-bright); }
+    .intro-sub { font: 500 12px/1 'JetBrains Mono', monospace; letter-spacing: .2em; text-transform: uppercase; color: #8a94a0; opacity: 0; }
+    .intro-flash { position: absolute; inset: 0; background: var(--accent-bright); opacity: 0; pointer-events: none; }
   </style>
 </head>
 
 <body>
+  <div id="intro" aria-hidden="true">
+    <div class="intro-mark">
+      <img src="assets/logo.png" alt="">
+      <div class="intro-word"><span>V</span><span>O</span><span>L</span><span>T</span><span>E</span><span>X</span></div>
+      <div class="intro-line"></div>
+      <div class="intro-sub">FTC #38557 · Power &amp; Precision</div>
+    </div>
+    <div class="intro-flash"></div>
+  </div>
+  <script type="module">
+    const root = document.documentElement;
+    const done = () => {
+      root.classList.remove('intro');
+      try { sessionStorage.setItem('intro', '1'); } catch (e) {}
+    };
+    if (root.classList.contains('intro')) {
+      // never trap the page if the CDN is slow or blocked
+      const bail = setTimeout(done, 4000);
+      try {
+        const { animate, stagger } = await import('https://cdn.jsdelivr.net/npm/motion@12/+esm');
+        const intro = document.getElementById('intro');
+        const skip = () => { clearTimeout(bail); done(); };
+        intro.addEventListener('click', skip, { once: true });
+        await animate([
+          ['.intro-mark img', { opacity: [0, 1], scale: [0.6, 1], rotate: [-12, 0] }, { type: 'spring', bounce: 0.4, duration: 0.7 }],
+          ['.intro-word span', { y: ['110%', '0%'] }, { delay: stagger(0.06), duration: 0.55, ease: [0.2, 0.7, 0.2, 1], at: '-0.35' }],
+          ['.intro-line', { scaleX: [0, 1] }, { duration: 0.45, ease: 'easeOut', at: '-0.2' }],
+          ['.intro-sub', { opacity: [0, 1], y: [8, 0] }, { duration: 0.35, at: '-0.2' }],
+          ['.intro-flash', { opacity: [0, 0.9, 0] }, { duration: 0.35, at: '+0.25' }],
+          ['.intro-mark', { scale: [1, 1.04], opacity: [1, 0] }, { duration: 0.3, at: '-0.15' }],
+          [intro, { clipPath: ['inset(0 0 0% 0)', 'inset(0 0 100% 0)'] }, { duration: 0.7, ease: [0.76, 0, 0.24, 1] }],
+        ]);
+        clearTimeout(bail);
+        done();
+      } catch (e) { clearTimeout(bail); done(); }
+    }
+  </script>
   <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
     <defs>
       <linearGradient id="mj-steel" x1="0" y1="0" x2="0" y2="1">
