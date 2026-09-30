@@ -1561,23 +1561,20 @@
     ::view-transition-old(root), ::view-transition-new(root) { animation: none; mix-blend-mode: normal; }
 
     /* SPONSORS */
-    #sponsors { padding-bottom: clamp(64px, 8vw, 100px); }
-    .spon-head { max-width: 720px; }
-    .spon-head h2 { font-size: clamp(36px, 5vw, 68px); line-height: 1; letter-spacing: -.04em; font-weight: 600; margin: 18px 0 20px; }
-    .spon-head h2 em { font-style: normal; color: var(--accent); }
-    .spon-head p { color: var(--ink-2); font-size: 18px; max-width: 560px; }
-    .spon-uses { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; margin-top: 48px; }
-    .spon-uses > div { background: var(--surface); padding: 28px; }
-    .spon-uses h3 { font-size: 20px; font-weight: 600; letter-spacing: -.02em; margin: 10px 0 6px; }
-    .spon-uses p { font-size: 15px; color: var(--ink-2); line-height: 1.5; }
-    .spon-wall { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 16px; }
-    .spon-slot { display: grid; place-content: center; text-align: center; gap: 6px; min-height: 120px; border: 1px dashed var(--line-hover); border-radius: 16px; font-family: var(--mono); font-size: 12px; color: var(--muted); }
-    .spon-cta { border: 1px solid var(--accent); background: var(--tint); color: var(--accent); font-family: var(--sans); font-size: 17px; font-weight: 600; transition: background-color .3s var(--ease), color .3s var(--ease); }
-    .spon-cta span { font-family: var(--mono); font-size: 11px; font-weight: 400; opacity: .8; }
-    .spon-cta:hover { background: var(--accent); color: var(--on-ink); }
+    #sponsors h2 em { font-style: normal; color: var(--accent); }
+    #sponsors .facts { margin-top: 0; }
+    .spon-btn { margin-top: 28px; }
+    .spon-list { list-style: none; border-top: 1px solid var(--line); }
+    .spon-list li { display: grid; grid-template-columns: 56px 1fr auto; gap: 24px; align-items: baseline; padding: 28px 0; border-bottom: 1px solid var(--line); position: relative; }
+    .spon-list li::after { content: ''; position: absolute; left: 0; bottom: -1px; height: 1px; width: 100%; background: var(--accent); transform: scaleX(0); transform-origin: left; transition: transform .6s var(--ease); }
+    .spon-list li:hover::after { transform: scaleX(1); }
+    .spon-n { font-family: var(--mono); font-size: 13px; color: var(--accent); }
+    .spon-list h3 { font-size: clamp(22px, 2.4vw, 30px); font-weight: 600; letter-spacing: -.025em; line-height: 1.15; transition: transform .4s var(--ease); }
+    .spon-list li:hover h3 { transform: translateX(6px); }
+    .spon-list p { color: var(--ink-2); margin-top: 6px; font-size: 16px; }
     @media (max-width: 760px) {
-      .spon-uses { grid-template-columns: 1fr; }
-      .spon-wall { grid-template-columns: 1fr 1fr; }
+      .spon-list li { grid-template-columns: 40px 1fr; }
+      .spon-list li > .label { display: none; }
     }
 
     /* Entrance intro */
@@ -2131,21 +2128,30 @@
 
   <section id="sponsors" class="section-border">
     <div class="wrap">
-      <div class="spon-head reveal">
-        <div class="label">04 — Sponsors</div>
-        <h2>Help us <em>power up.</em></h2>
-        <p>We're a first-year, student-run team. Sponsors cover the parts, tools, and competition fees that get our robot onto the field, and every sponsor gets featured right here.</p>
+      <div class="team-head">
+        <div>
+          <div class="label reveal">04 — Sponsors</div>
+          <h2 class="reveal">Help us <em>power up.</em></h2>
+        </div>
+        <div class="team-head-side">
+          <p class="reveal">We're a first-year, student-run team. Sponsors cover what it takes to get our robot onto the field.</p>
+        </div>
       </div>
-      <div class="spon-uses reveal">
-        <div><span class="label">01</span><h3>Robot parts</h3><p>Motors, sensors, and the aluminum our robot is built from.</p></div>
-        <div><span class="label">02</span><h3>Competition fees</h3><p>FIRST registration and travel to league meets.</p></div>
-        <div><span class="label">03</span><h3>Outreach</h3><p>Demos and workshops for younger students.</p></div>
-      </div>
-      <div class="spon-wall reveal" aria-label="Sponsor logos">
-        <div class="spon-slot">Your logo here</div>
-        <div class="spon-slot">Your logo here</div>
-        <div class="spon-slot">Your logo here</div>
-        <a class="spon-slot spon-cta" href="https://www.instagram.com/voltex.robotics/" target="_blank" rel="noopener">Become a sponsor ↗<span>DM @voltex.robotics</span></a>
+      <div class="about-grid">
+        <aside class="about-side">
+          <dl class="facts reveal">
+            <div><dt>Team</dt><dd>FTC #38557</dd></div>
+            <div><dt>Season</dt><dd>2026, our first</dd></div>
+            <div><dt>Contact</dt><dd><a href="https://www.instagram.com/voltex.robotics/" target="_blank" rel="noopener">@voltex.robotics ↗</a></dd></div>
+          </dl>
+          <a href="https://www.instagram.com/voltex.robotics/" target="_blank" rel="noopener" class="btn btn-dark spon-btn reveal">Become a sponsor
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6" /></svg></a>
+        </aside>
+        <ol class="spon-list">
+          <li class="reveal"><span class="spon-n">01</span><div><h3>Robot parts</h3><p>Motors, sensors, and the aluminum our robot is built from.</p></div><span class="label">build</span></li>
+          <li class="reveal"><span class="spon-n">02</span><div><h3>Competition fees</h3><p>FIRST registration and travel to league meets.</p></div><span class="label">compete</span></li>
+          <li class="reveal"><span class="spon-n">03</span><div><h3>Outreach</h3><p>Demos and workshops for younger students.</p></div><span class="label">share</span></li>
+        </ol>
       </div>
     </div>
   </section>
