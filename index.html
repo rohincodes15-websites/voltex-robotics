@@ -1563,7 +1563,7 @@
     /* SPONSORS */
     #sponsors h2 em { font-style: normal; color: var(--accent); }
     #sponsors .facts { margin-top: 0; }
-    .spon-btn { margin-top: 28px; }
+    .spon-btn { margin-top: 28px; width: 100%; max-width: 300px; justify-content: space-between; }
     .spon-list { list-style: none; border-top: 1px solid var(--line); }
     .spon-list li { display: grid; grid-template-columns: 56px 1fr auto; gap: 24px; align-items: baseline; padding: 28px 0; border-bottom: 1px solid var(--line); position: relative; }
     .spon-list li::after { content: ''; position: absolute; left: 0; bottom: -1px; height: 1px; width: 100%; background: var(--accent); transform: scaleX(0); transform-origin: left; transition: transform .6s var(--ease); }
@@ -1603,7 +1603,7 @@
       <svg class="intro-ham" viewBox="0 0 120 200"><use href="#mjolnir" width="120" height="200" /></svg>
       <div class="intro-word"><span>V</span><span>O</span><span>L</span><span>T</span><span>E</span><span>X</span></div>
       <div class="intro-line"></div>
-      <div class="intro-sub">FTC #38557 · Power &amp; Precision</div>
+      <div class="intro-sub">FIRST Tech Challenge · Power &amp; Precision</div>
     </div>
     <div class="intro-flash"></div>
   </div>
@@ -2210,7 +2210,7 @@
       <div class="about-grid">
         <aside class="about-side">
           <dl class="facts reveal">
-            <div><dt>Team</dt><dd>FTC #38557</dd></div>
+            <div><dt>Team</dt><dd id="sponTeam"><a href="#vault">Locked in the vault ↑</a></dd></div>
             <div><dt>Season</dt><dd>2026, our first</dd></div>
             <div><dt>Contact</dt><dd><a href="https://www.instagram.com/voltex.robotics/" target="_blank" rel="noopener">@voltex.robotics ↗</a></dd></div>
           </dl>
@@ -2719,6 +2719,7 @@
     const face = document.getElementById('vaultFace'), door = document.getElementById('vaultDoor');
     const reels = [...vault.querySelectorAll('.reel')], vBoltEls = [...vault.querySelectorAll('.vs-bolt')];
     const vStatus = document.getElementById('vaultStatus'), vHint = document.getElementById('vaultHint');
+    const sponTeam = document.getElementById('sponTeam'), SPON_LOCKED = sponTeam.innerHTML;
     const pulse = vault.querySelector('.vd-pulse'), pointer = vault.querySelector('.vd-pointer');
     const CODE = [3, 8, 5, 5, 7], HINT = vHint.textContent;
     let vIdx = 0, vAngle = 0, vBusy = false, vQueued = 0;
@@ -2789,6 +2790,7 @@
       vault.classList.add('open');
       vStatus.textContent = 'Access granted';
       vHint.innerHTML = 'VOLTEX · FTC Team #38557 &nbsp;<button type="button">Lock again ↺</button>';
+      sponTeam.textContent = 'FTC #38557';
       vHint.querySelector('button').addEventListener('click', lockVault);
       if (!reduce) {
         await sleep(450);
@@ -2809,6 +2811,7 @@
       vault.classList.remove('open');
       vStatus.textContent = 'Locking…';
       vHint.textContent = HINT;
+      sponTeam.innerHTML = SPON_LOCKED;
       await sleep(900);
       for (const b of [...vBoltEls].reverse()) { b.classList.remove('retract'); await sleep(50); }
       reels.forEach(r => {
