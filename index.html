@@ -1596,6 +1596,7 @@
     .intro-word span { display: inline-block; transform: translateY(110%); }
     .intro-line { width: min(240px, 60vw); height: 2px; background: var(--accent-bright); transform: scaleX(0); box-shadow: 0 0 14px var(--accent-bright); }
     .intro-sub { display: flex; flex-wrap: wrap; justify-content: center; max-width: 92vw; font: 500 clamp(13px, 2vw, 20px)/1.3 'JetBrains Mono', monospace; letter-spacing: .22em; text-transform: uppercase; color: #9ff3ff; }
+    .intro-sub:not(.split) { visibility: hidden; }
     .intro-sub span { display: inline-block; opacity: 0; white-space: pre; }
     .intro-bolts { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; overflow: visible; }
     .intro-bolts path { fill: none; stroke: #dffbff; stroke-linecap: butt; stroke-linejoin: round; opacity: 0; filter: drop-shadow(0 0 6px #00c9e8) drop-shadow(0 0 18px #00c9e8); }
@@ -1633,6 +1634,7 @@
         // lightning: jagged paths from the top of the screen down onto the hammer head
         const sub = intro.querySelector('.intro-sub');
         sub.innerHTML = [...sub.textContent].map(c => `<span>${c}</span>`).join('');
+        sub.classList.add('split');
         const ham = intro.querySelector('.intro-ham'), svg = intro.querySelector('.intro-bolts');
         const W = innerWidth, H = innerHeight;
         svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
@@ -1696,7 +1698,11 @@
           });
         }, 55);
         const buzz = animate(ham, { x: [0, -2, 2, -1, 1, 0] }, { duration: .12, repeat: 5 });
-        buzz.then(() => animate(ham, { y: [0, -10, 0], rotate: [-3, 3, -3] }, { duration: 1.8, repeat: Infinity, ease: 'easeInOut' }));
+        // once charged: lift off the ground and hold, trembling with stored power
+        buzz.then(() => {
+          animate(ham, { y: [0, -8], scale: [1, 1.04] }, { duration: .35, ease: [.2, .9, .3, 1] });
+          animate(ham, { x: [0, -1.5, 1.2, -.8, 1.5, 0], rotate: [0, -.7, .5, -.4, .7, 0] }, { duration: .11, repeat: Infinity, ease: 'linear' });
+        });
 
         await animate([
           'impact',
