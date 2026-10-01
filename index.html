@@ -664,8 +664,10 @@
     }
     .storm-title .st-word { display: flex; font-size: clamp(48px, min(15vw, 20vh), 220px); font-weight: 700; letter-spacing: -.05em; line-height: .9; }
     .storm-title .st-word span { color: #152028; transition: color .12s, text-shadow .3s; }
+    .storm-title .st-word span:last-child { letter-spacing: 0; }
     .storm-title .st-word span.lit { color: #e8fcff; text-shadow: 0 0 18px rgba(0, 201, 232, .9), 0 0 60px rgba(0, 201, 232, .5); }
     .storm-title .st-sub { display: flex; flex-wrap: wrap; justify-content: center; font: 600 clamp(16px, 2.6vw, 32px) var(--mono); letter-spacing: .3em; color: var(--accent-bright); }
+    .storm-title .st-sub.fit { flex-wrap: nowrap; justify-content: space-between; letter-spacing: 0; }
     .storm-title .st-sub span { display: inline-block; white-space: pre; opacity: 0; transform: translateY(14px); transition: opacity .3s, transform .4s var(--ease), color .2s, text-shadow .4s; }
     .storm-title .st-sub span.lit { opacity: 1; transform: none; color: #e8fcff; text-shadow: 0 0 14px rgba(0, 201, 232, .95), 0 0 40px rgba(0, 201, 232, .5); }
     .storm-title .st-sub span.lit.cool { color: var(--accent-bright); text-shadow: 0 0 10px rgba(0, 201, 232, .6); }
@@ -2646,6 +2648,12 @@
       const title = document.createElement('div'); title.className = 'storm-title'; title.setAttribute('aria-hidden', 'true');
       title.innerHTML = '<div class="st-word">' + [...'VOLTEX'].map(c => `<span>${c}</span>`).join('') + '</div><div class="st-sub">' + [...'POWER & PRECISION'].map(c => `<span>${c === '&' ? '&amp;' : c}</span>`).join('') + '</div>';
       document.body.append(title);
+      // stretch POWER & PRECISION to sit exactly under VOLTEX, edge to edge
+      const stWord = title.querySelector('.st-word'), stSub = title.querySelector('.st-sub');
+      stSub.classList.add('fit');
+      const natural = [...stSub.children].reduce((w, sp) => w + sp.getBoundingClientRect().width, 0);
+      if (natural <= stWord.offsetWidth) stSub.style.width = stWord.offsetWidth + 'px';
+      else stSub.classList.remove('fit');
       // keep the title clear of the hammer standing in the ground
       const hmTop = hm.getBoundingClientRect().top, tb = title.getBoundingClientRect();
       if (tb.bottom > hmTop - 24) title.style.transform = `scale(${Math.max(.45, (hmTop - 24 - tb.top) / tb.height)})`;
